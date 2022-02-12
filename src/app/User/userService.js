@@ -60,7 +60,7 @@ exports.postNaverLogin = async function (identification) {
     try {
         // 식별번호 확인
         const identificationRows = await userProvider.checkUserExistByIdenType(identification);
-        if (identification.length<1) return errResponse(baseResponse.LOGIN_NAVER_IDENTIFICATION_ERROR);
+        if (identificationRows.length<1) return errResponse(baseResponse.LOGIN_NAVER_IDENTIFICATION_ERROR);
 
         // 계정 상태 확인
         const userInfoRows = await userProvider.accountStatusCheck(identification); //status, nickname
