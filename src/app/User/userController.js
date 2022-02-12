@@ -7,7 +7,7 @@ const yearNow = require("date-utils");
 const regexEmail = require("regex-email");
 const s3Client = require("../../../config/s3");
 const naver = require("../../../config/naver");
-const kakao = require("../../../config/kakao");
+//const kakao = require("../../../config/kakao");
 
 const AWS = require('aws-sdk');
 
