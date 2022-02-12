@@ -95,4 +95,6 @@ module.exports = {
     USER_BIRTHYEAR_NUMBER_WRONG : {"isSuccess": false, "code": 6013, "message": "출생년도는 4자리를 입력해주세요"},
     USER_BIRTHYEAR_TIME_WRONG : {"isSuccess": false, "code": 6014, "message": "출생년도가 올바르지 않습니다."},
     USER_SETAGE_EMPTY : {"isSuccess": false, "code": 6015, "message": "연령대 지정 값을 입력해주세요."},
+    LOGIN_KAKAO_TOKEN_ERROR : { "isSuccess": false, "code": 6016, "message": "카카오 토큰번호에 문제가 있습니다."},
+    LOGIN_KAKAO_ERROR : { "isSuccess": false, "code": 6017, "message": "카카오 로그인에 실패하였습니다."},
 }

@@ -7,6 +7,8 @@ const yearNow = require("date-utils");
 const regexEmail = require("regex-email");
 const s3Client = require("../../../config/s3");
 const naver = require("../../../config/naver");
+const kakao = require("../../../config/kakao");
+
 const AWS = require('aws-sdk');
 
 /**
@@ -17,6 +19,108 @@ const AWS = require('aws-sdk');
 exports.getTest = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS))
 }
+//참고사이트 : https://zionh.tistory.com/40
+/**
+ * API No. 1
+ * API Name : 카카오 로그인 API
+ * [GET] /app/users/login/kakao
+ *
+ */
+exports.loginKakao = async function (req, res) {
+
+    var code = req.body.code;
+    const client_id = kakao.client_id;
+    const client_secret = kakao.client_secret;
+    console.log('code: '+code);
+
+    let api_url = 'https://kauth.kakao.com/oauth/token';
+
+    var request = require('request');
+    var options = {
+        url: api_url,
+        headers: {
+            'content-type':'application/x-www-form-urlencoded;charset=utf-8'
+        },
+        body : {
+            "grant_type" : authorization_code,
+            "client_id" : client_id,
+            "code" : code,
+            // "redirect_uri" :
+            "client_secret" : client_secret
+        }
+
+    };
+
+    request.post(options, function (error, resp, body) {//post를 써도 되는지 잘 모르겠어요..흠,,
+        if (!error && resp.statusCode == 200) {
+            console.log('success token');
+            const obj = JSON.parse(body);
+            var token = obj.access_token;
+            var header = "bearer " + token; // Bearer 다음에 공백 추가
+            console.log('token ' + token);
+
+            var api_url = 'https://kapi.kakao.com/v2/user/me';
+            var request2 = require('request');
+            console.log(body);
+
+            var options = {
+                url: api_url,
+                headers: {'Authorization': header}
+            };
+        request2.get(options, async function (error, response, body) {
+            if (!error && response.statusCode == 200) {
+                console.log('success me');
+                const myInfo = JSON.parse(body);
+                console.log(myInfo.response)
+                const email = myInfo.response.kakao_account.email;
+                const identification = myInfo.response.id;
+                console.log(email);
+                console.log('id: ' + identification)
+
+                // DB에 유저 있는지 확인 후, 없으면 로그인 처리
+                const userExist = await userProvider.checkUserExist(email, identification);
+                console.log(userExist)
+                if (userExist.length>0) {
+                    const signInResponse = await userService.postKaKaoLogin(identification);
+                    return res.send(signInResponse);
+                }
+                // 회원가입하게 받은 정보 리턴해주기.
+                else {
+                    let nickname='', birthYear='', gender='';
+                    if (myInfo.response.name) nickname = myInfo.response.name;
+                    if (myInfo.response.gender) gender = myInfo.response.gender;
+                    if (myInfo.response.birthYear) birthYear = myInfo.response.birthYear;
+
+                    const result = {'nickname' : nickname, 'birthYear' : birthYear, 'gender' : gender, 'type' : 'kakao',
+                        'email' : email, 'identification' : identification}
+
+                    return res.json({
+                        isSuccess: false,
+                        code     : 5028,
+                        message  : "로그인 실패. 회원가입해주세요",
+                        result   : result
+                    });
+                }
+
+            } else {
+                console.log('error');
+                if(response != null) {
+                    //res.status(response.statusCode).end();
+                    console.log('me error = ' + response.statusCode);
+                    return res.send(response(baseResponse.LOGIN_KAKAO_TOKEN_ERROR));
+                }
+                return res.send(response(baseResponse.LOGIN_KAKAO_ERROR));
+            }
+        });
+    } else {
+        console.log('token error = ' + response.statusCode);
+        return res.send(response(baseResponse.LOGIN_KAKAO_TOKEN_ERROR));
+        //res.status(response.statusCode).end();
+
+    }
+});
+}
+
 
 /**
  * API No. 2
@@ -128,7 +232,7 @@ exports.login = async function (req, res) {
     const { email, identification } = req.body;
 
     const signInResponse = await userService.postSignIn(email, identification);
-    
+
     return res.send(signInResponse);
 }
 
@@ -140,7 +244,7 @@ exports.login = async function (req, res) {
  *body: nickname, birthYear, gender, type, email, identification
  */
 exports.postUsers = async function (req, res) {
- 
+
     const {nickname, birthYear, gender, type, email, identification} = req.body;
 
     // 빈 값 체크

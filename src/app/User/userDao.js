@@ -102,6 +102,18 @@ async function selectUserCheckIden(connection, identification) {
   return userRow;
 }
 
+
+async function selectUserCheckIdenTypeKaKao(connection, identification) {
+  const params = [identification, 'kakao']
+  const selectUserQuery = `
+    select userIdx, identification
+    from User
+    where identification = ? and type = ?;
+                 `;
+  const [userRow] = await connection.query(selectUserQuery, params);
+  return userRow;
+}
+
 // 식별값으로 사용자 존재하는지 확인
 async function selectUserCheckIdenType(connection, identification) {
   const params = [identification, 'naver']
@@ -251,4 +263,6 @@ module.exports = {
   selectUserCheckIden,
   selectUserCheckIdenType,
   selectUserStatusByIden,
+  selectUserCheckIdenTypeKaKao,
 };
+

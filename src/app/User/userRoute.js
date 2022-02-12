@@ -6,6 +6,9 @@ module.exports = function(app){
     // 0. 테스트 API
     app.get('/app/test', user.getTest);
 
+    // 1. 카카오 로그인 API
+    app.get('app/users/login/kakao', user.loginKakao);
+
     // 2. 네이버 로그인 API
     app.get('/app/users/login/naver', user.loginNaver);
 
