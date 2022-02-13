@@ -59,8 +59,6 @@ exports.postSignIn = async function (email, identification) {
 
 exports.postKaKaoLogin = async function (identification) {
     try {
-        //??식별번호 확인이 필요할까용..?
-
         // 계정 상태 확인
         const userInfoRows = await userProvider.accountStatusCheck(identification); //status, nickname
 
