@@ -7,10 +7,10 @@ module.exports = function(app){
     app.get('/app/test', user.getTest);
 
     // 1. 카카오 로그인 API
-    app.get('/app/users/login/kakao', user.loginKakao);
+    app.post('/app/users/login/kakao', user.loginKakao);
 
     // 2. 네이버 로그인 API
-    app.get('/app/users/login/naver', user.loginNaver);
+    app.post('/app/users/login/naver', user.loginNaver);
 
     // 3. 로그인 API
     app.post('/app/users/login', user.login);

@@ -23,7 +23,7 @@ exports.getTest = async function (req, res) {
 /**
  * API No. 1
  * API Name : 카카오 로그인 API
- * [GET] /app/users/login/kakao
+ * [POST] /app/users/login/kakao
  *
  */
 exports.loginKakao = async function (req, res) {
@@ -126,18 +126,18 @@ exports.loginKakao = async function (req, res) {
 /**
  * API No. 2
  * API Name : 네이버 로그인 API
- * [GET] /app/users/login/naver
+ * [POST] /app/users/login/naver
  *
  */
 exports.loginNaver = async function (req, res) {
 
-    const { token } = req.body.accessToken;
+    const { token } = req.body;
     var header = "bearer " + token; // Bearer 다음에 공백 추가
     console.log('token ' + token);
 
     var api_url = 'https://openapi.naver.com/v1/nid/me';
     var request2 = require('request');
-    console.log(body);
+    //console.log(body);
 
     var options = {
         url: api_url,
@@ -184,9 +184,9 @@ exports.loginNaver = async function (req, res) {
             if(response != null) {
                 //res.status(response.statusCode).end();
                 console.log('me error = ' + response.statusCode);
-                return res.send(response(baseResponse.LOGIN_NAVER_TOKEN_ERROR));
+                return res.send(baseResponse.LOGIN_NAVER_TOKEN_ERROR);
             }
-            return res.send(response(baseResponse.LOGIN_NAVER_ERROR));
+            return res.send(baseResponse.LOGIN_NAVER_ERROR);
         }
     });
 }
