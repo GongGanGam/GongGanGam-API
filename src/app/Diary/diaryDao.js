@@ -86,6 +86,17 @@ async function selectAnswer(connection, userIdx, pageSize, offset) {
     return diaryInfo;
 }
 
+// 일기에 대해 답장을 할 수 있는지
+async function checkDiaryAnswerValid(connection, diaryIdx) {
+    const selectShareDiaryValidQuery = `
+        select answerIdx
+        from Answer
+        where diaryIdx=?;
+                `;
+    const [diaryInfo] = await connection.query(selectShareDiaryValidQuery, diaryIdx);
+    return diaryInfo;
+}
+
 async function selectAllAnswer(connection, userIdx) {
     const selectAnswerQuery = `
         select answerIdx
@@ -314,5 +325,5 @@ module.exports = {
     selectDiaryDetail, selectAnswerDetail, insertAnswer, selectRandUser, updateDiary,
     insertShare, insertDiaryImg, selectAllShareList, selectAllAnswer, updateDiaryReadStatus,
     checkDiaryShareUser, checkShareAgree, checkAnswerExists, selectDiaryByAnswerIdx,
-    selectAnswerByIdx, updateAnswerReject
+    selectAnswerByIdx, updateAnswerReject, checkDiaryAnswerValid
 };

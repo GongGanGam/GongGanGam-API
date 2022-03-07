@@ -54,6 +54,13 @@ exports.retrieveAllShared = async function (userIdx) {
 exports.retrieveSharedDiary = async function (diaryIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const shareList = await diaryDao.selectShareDiary(connection, diaryIdx);
+    // 다이어리 답장이 있는지 확인
+    const shareDiaryValid = await diaryDao.checkDiaryAnswerValid(connection, diaryIdx);
+    console.log(shareDiaryValid)
+    let answerValid = 'T';
+    if (shareDiaryValid.length>0) answerValid = 'F'
+
+    shareList[0].answerValid = answerValid;
 
     connection.release();
 
