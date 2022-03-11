@@ -1,6 +1,12 @@
 
 
-# 마음 속 작은 창문 “공간감”
+
+
+
+# 당 마음 속 작은 창문 “공간감”
+
+
+
 
 ![mainMockup](https://user-images.githubusercontent.com/89574881/157797445-0a035fda-127e-46f5-bc74-595328f98e6a.jpeg)
 
@@ -9,20 +15,15 @@
 
 # API Sheet
 
----
 
 <img width="626" alt="Screen Shot 2022-03-11 at 12 43 27 PM" src="https://user-images.githubusercontent.com/80459739/157798827-3002dda5-ce3d-48f1-86ac-475105c513f3.jpeg">
 
 
 # ERD
 
----
-
 <img width="438" alt="Screen Shot 2022-03-11 at 12 38 55 PM" src="https://user-images.githubusercontent.com/89574881/157797501-755dc8db-4ce2-4ff9-afbb-dc0af4bdac1e.png">
 
 # Tech Stack
-
----
 
 | Server | AWS EC2 |
 | --- | --- |
@@ -70,8 +71,6 @@
 ```
 
 # Foldering
-
----
 
 ```markdown
 '|-- app',
