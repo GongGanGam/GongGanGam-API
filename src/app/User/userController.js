@@ -28,98 +28,60 @@ exports.getTest = async function (req, res) {
  */
 exports.loginKakao = async function (req, res) {
 
-    var code = req.query.code;
-    const client_id = kakao.client_id;
-    const client_secret = kakao.client_secret;
-    console.log('code: '+code);
+    const { token } = req.body;
+    var header = 'Bearer ' + token; // Bearer 다음에 공백 추가
+    console.log('token ' + token);
 
-    let api_url = 'https://kauth.kakao.com/oauth/token?grant_type=authorization_code&client_id='
-        + client_id + '&redirect_uri=http://3.36.219.12:3000/app/users/login/kakao&code='+code
-        +'&client_secret='+client_secret;
-    var request = require('request');
+    var api_url = 'https://kapi.kakao.com/v2/user/me';
+    var request2 = require('request');
+    console.log(body);
+
     var options = {
         url: api_url,
-        headers: {
-            'Content-Type':'application/x-www-form-urlencoded;'
-        },
-        /*body : {
-            'grant_type' : 'authorization_code',
-            'client_id' : client_id,
-            'redirect_uri' : 'http://3.34.199.201:3000/app/users/login/kakao',
-            'code' : code,
-            'client_secret' : client_secret
-        }*/
+        headers: {'Authorization': header},
     };
-    console.log('aaaaaa');
-    request.post(options, function (error, resp, body) {
-        if (!error) {
-            console.log(body);
-            console.log('success token');
-            const obj = JSON.parse(body);
-            var token = obj.access_token;
-            var header = 'Bearer ' + token; // Bearer 다음에 공백 추가
-            console.log('token ' + token);
+    request2.get(options, async function (error, response, body) {
+        if (!error && response.statusCode == 200) {
+            console.log('success me');
+            const myInfo = JSON.parse(body);
+            console.log(myInfo)
+            const email = myInfo.kakao_account.email;
+            const identification = myInfo.id;
+            console.log(email);
+            console.log('id: ' + identification)
 
-            var api_url = 'https://kapi.kakao.com/v2/user/me';
-            var request2 = require('request');
-            console.log(body);
+            // DB에 유저 있는지 확인 후, 없으면 로그인 처리
+            const userExist = await userProvider.checkUserExist(email, identification);
+            console.log(userExist)
+            if (userExist.length > 0) {
+                const signInResponse = await userService.postKaKaoLogin(identification);
+                return res.send(signInResponse);
+            }
+            // 회원가입하게 받은 정보 리턴해주기.
+            else {
 
-            var options = {
-                url: api_url,
-                headers: {'Authorization': header},
-            };
-            request2.get(options, async function (error, response, body) {
-                if (!error && response.statusCode == 200) {
-                    console.log('success me');
-                    const myInfo = JSON.parse(body);
-                    console.log(myInfo)
-                    const email = myInfo.kakao_account.email;
-                    const identification = myInfo.id;
-                    console.log(email);
-                    console.log('id: ' + identification)
+                const signinResponse = await userService.createUser("nickname", 2000, "N", "kakao", email, identification);
 
-                    // DB에 유저 있는지 확인 후, 없으면 로그인 처리
-                    const userExist = await userProvider.checkUserExist(email, identification);
-                    console.log(userExist)
-                    if (userExist.length>0) {
-                        const signInResponse = await userService.postKaKaoLogin(identification);
-                        return res.send(signInResponse);
-                    }
-                    // 회원가입하게 받은 정보 리턴해주기.
-                    else {
-                        let nickname='', birthYear='', gender='';
-                        if (myInfo.name) nickname = myInfo.name;
-                        if (myInfo.gender) gender = myInfo.gender;
-                        if (myInfo.birthYear) birthYear = myInfo.birthYear;
+                return res.json({
+                    isSuccess: false,
+                    code: 5028,
+                    message: "로그인 실패. 회원가입해주세요",
+                    result: signinResponse
+                });
 
-                        const result = {'nickname' : nickname, 'birthYear' : birthYear, 'gender' : gender, 'type' : 'kakao',
-                            'email' : email, 'identification' : identification}
+            }
 
-                        return res.json({
-                            isSuccess: false,
-                            code     : 5028,
-                            message  : "로그인 실패. 회원가입해주세요",
-                            result   : result
-                        });
-                    }
-
-                } else {
-                    console.log('error');
-                    if(response != null) {
-                        //res.status(response.statusCode).end();
-                        console.log('me error = ' + response.statusCode);
-                        return res.send(errResponse(baseResponse.LOGIN_KAKAO_TOKEN_ERROR));
-                    }
-                    return res.send(errResponse(baseResponse.LOGIN_KAKAO_ERROR));
-                }
-            });
         } else {
-
-            console.log('token error = ' + response.statusCode);
-            return res.send(errResponse(baseResponse.LOGIN_KAKAO_TOKEN_ERROR));
-
+            console.log('error');
+            if (response != null) {
+                //res.status(response.statusCode).end();
+                console.log('me error = ' + response.statusCode);
+                return res.send(errResponse(baseResponse.LOGIN_KAKAO_TOKEN_ERROR));
+            }
+            return res.send(errResponse(baseResponse.LOGIN_KAKAO_ERROR));
         }
     });
+
 }
 
 
@@ -161,21 +123,15 @@ exports.loginNaver = async function (req, res) {
                 const signInResponse = await userService.postNaverLogin(identification);
                 return res.send(signInResponse);
             }
-            // 회원가입하게 받은 정보 리턴해주기.
+            // 회원가입처리.
             else {
-                let nickname='', birthYear='', gender='';
-                if (myInfo.response.name) nickname = myInfo.response.name;
-                if (myInfo.response.gender) gender = myInfo.response.gender;
-                if (myInfo.response.birthYear) birthYear = myInfo.response.birthYear;
-
-                const result = {'nickname' : nickname, 'birthYear' : birthYear, 'gender' : gender, 'type' : 'naver',
-                    'email' : email, 'identification' : identification}
+                const signinResponse = await userService.createUser("nickname", 2000, "N", "naver", email, identification);
 
                 return res.json({
                     isSuccess: false,
                     code     : 5028,
                     message  : "로그인 실패. 회원가입해주세요",
-                    result   : result
+                    result   : signinResponse
                 });
             }
 
@@ -190,94 +146,7 @@ exports.loginNaver = async function (req, res) {
         }
     });
 }
-// exports.loginNaver = async function (req, res) {
-//
-//     var code = req.query.code;
-//     var state = req.query.state;
-//     const client_id = naver.client_id;
-//     const client_secret = naver.client_secret;
-//     console.log('code: '+code);
-//
-//     let api_url = 'https://nid.naver.com/oauth2.0/token?grant_type=authorization_code&client_id='
-//         + client_id + '&client_secret=' + client_secret + '&code=' + code + '&state=' + state;
-//
-//     var request = require('request');
-//     var options = {
-//         url: api_url,
-//         headers: {'X-Naver-Client-Id':client_id, 'X-Naver-Client-Secret': client_secret}
-//     };
-//
-//     request.get(options, function (error, resp, body) {
-//         if (!error && resp.statusCode == 200) {
-//             console.log('success token');
-//             const obj = JSON.parse(body);
-//             var token = obj.access_token;
-//             var header = "bearer " + token; // Bearer 다음에 공백 추가
-//             console.log('token ' + token);
-//
-//             var api_url = 'https://openapi.naver.com/v1/nid/me';
-//             var request2 = require('request');
-//             console.log(body);
-//
-//             var options = {
-//                 url: api_url,
-//                 headers: {'Authorization': header}
-//             };
-//             request2.get(options, async function (error, response, body) {
-//                 if (!error && response.statusCode == 200) {
-//                     console.log('success me');
-//                     const myInfo = JSON.parse(body);
-//                     console.log(myInfo.response)
-//                     const email = myInfo.response.email;
-//                     const identification = myInfo.response.id;
-//                     console.log(email);
-//                     console.log('id: ' + identification)
-//
-//                     const iden = 23893;
-//                     // DB에 유저 있는지 확인 후, 없으면 로그인 처리
-//                     const userByIden = await userProvider.checkUserExistByIden(iden);
-//                     console.log(userByIden)
-//                     if (userByIden.length>0) {
-//                         const signInResponse = await userService.postNaverLogin(iden);
-//                         return res.send(signInResponse);
-//                     }
-//                     // 회원가입하게 받은 정보 리턴해주기.
-//                     else {
-//                         let nickname='', birthYear='', gender='';
-//                         if (myInfo.response.name) nickname = myInfo.response.name;
-//                         if (myInfo.response.gender) gender = myInfo.response.gender;
-//                         if (myInfo.response.birthYear) birthYear = myInfo.response.birthYear;
-//
-//                         const result = {'nickname' : nickname, 'birthYear' : birthYear, 'gender' : gender, 'type' : 'naver',
-//                             'email' : email, 'identification' : identification}
-//
-//                         return res.json({
-//                             isSuccess: false,
-//                             code     : 5028,
-//                             message  : "로그인 실패. 회원가입해주세요",
-//                             result   : result
-//                         });
-//                     }
-//
-//                 } else {
-//                     console.log('error');
-//                     if(response != null) {
-//                         //res.status(response.statusCode).end();
-//                         console.log('me error = ' + response.statusCode);
-//                         return res.send(response(baseResponse.LOGIN_NAVER_TOKEN_ERROR));
-//                     }
-//                     return res.send(response(baseResponse.LOGIN_NAVER_ERROR));
-//                 }
-//             });
-//         } else {
-//             console.log('token error = ' + response.statusCode);
-//             return res.send(response(baseResponse.LOGIN_NAVER_TOKEN_ERROR));
-//             //res.status(response.statusCode).end();
-//
-//         }
-//     });
-//
-// }
+
 
 /**
  * API No. 3
@@ -297,42 +166,29 @@ exports.login = async function (req, res) {
 
 /**
  * API No. 4
- * API Name : 유저 생성 (회원가입) API
- * [POST] /app/users
- *body: nickname, birthYear, gender, type, email, identification
+ * API Name : 추가 정보 입력 API
+ * [POST] /app/users/signin
+ *body: nickname, birthYear, gender
  */
 exports.postUsers = async function (req, res) {
 
-    const {nickname, birthYear, gender, type, email, identification} = req.body;
+    const userIdFromJWT = req.verifiedToken.userIdx;
+    const {nickname, birthYear, gender} = req.body;
+    console.log(userIdFromJWT)
 
     // 빈 값 체크
-    if (!email) return res.send(response(baseResponse.USER_EMAIL_EMPTY));
-    if (!identification) return res.send(response(baseResponse.USER_IDENTIFICATION_EMPTY));
     if (!nickname) return res.send(response(baseResponse.SIGNIN_USER_NICKNAME_EMPTY));
     if (!birthYear) return res.send(response(baseResponse.USER_BIRTHYEAR_EMPTY));
     if (!gender) return res.send(response(baseResponse.USER_GENDER_EMPTY));
-    if (!type) return res.send(response(baseResponse.USER_TYPE_EMPTY));
 
     //길이 체크
     if (nickname.length > 20) return res.send(response(baseResponse.SIGNUP_NICKNAME_LENGTH));
 
-    // 형식 체크 (by 정규표현식)
-    if (!regexEmail.test(email))
-        return res.send(response(baseResponse.SIGNUP_EMAIL_ERROR_TYPE));
-
-    const checkUser = await userProvider.checkUserExist(email, identification);
-    if (checkUser.length > 0) {
-        return res.send(response(baseResponse.SIGNUP_USER_EXISTS));
-    }
-
-    // 회원가입 처리
-    const signUpResponse = await userService.createUser(
+    // 유저 정보 입력
+    const signUpResponse = await userService.updateUserInfo(
         nickname,
         birthYear,
-        gender,
-        type,
-        email,
-        identification
+        gender, userIdFromJWT
     );
 
     // signUpResponse 값을 json으로 전달

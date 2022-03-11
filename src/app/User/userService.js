@@ -160,7 +160,7 @@ exports.createUser = async function (nickname, birthYear, gender, type, email, i
             );
 
             await connection.commit();
-            return response(baseResponse.SUCCESS, {'userIdx': userNicknameResult[0].insertId, 'userName' : nickname, 'jwt': token});
+            return response(baseResponse.SUCCESS, {'userIdx': userNicknameResult[0].insertId, 'jwt': token});
         }
         catch (err) {
             await connection.rollback();
@@ -176,6 +176,32 @@ exports.createUser = async function (nickname, birthYear, gender, type, email, i
         return errResponse(baseResponse.DB_ERROR);
     }
 };
+
+//04(2). 추가 정보 입력
+exports.updateUserInfo = async function ( nickname, birthYear, gender, userIdx) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        //닉네임 중복 방지 & 동일 유저가 같은 이름으로 수정할 때
+        const userNicknameRows = await userProvider.checkUserExistByIdx(userIdx);
+
+        //회원 존재 확인
+        if (userNicknameRows.length < 1)
+            return errResponse(baseResponse.SIGNIN_ERROR);
+        // 수정할 이름이 중복됐는지 확인.
+        const userNicknameCheck = await userProvider.checkUserName(nickname, userIdx);
+        console.log(userNicknameCheck)
+        if (userNicknameCheck.length>0) return errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME);
+
+        const editUserResult = await userDao.updateUserSigninInfo(connection, nickname, birthYear, gender, userIdx)
+        connection.release();
+        return response(baseResponse.SUCCESS);
+
+    } catch (err) {
+        logger.error(`App - editUser Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}
 
 //05. 회원 정보 수정
 exports.editUser = async function ( nickname, birthYear, gender, setAge, userIdx) {

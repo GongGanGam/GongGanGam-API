@@ -185,6 +185,15 @@ async function updateUserInfo(connection,nickname, birthYear, gender, setAge, us
   return updateUserRow[0];
 }
 
+async function updateUserSigninInfo(connection,nickname, birthYear, gender, userIdx) {
+  const updateUserQuery = `
+    UPDATE User
+    SET nickname=?, birthYear=?, gender=?
+    WHERE userIdx = ?;`;
+  const updateUserRow = await connection.query(updateUserQuery, [nickname, birthYear, gender, userIdx]);
+  return updateUserRow[0];
+}
+
 async function selectUserStatus(connection, userIdx){
   const selectUserStatusQuery = `
     SELECT status
@@ -264,5 +273,6 @@ module.exports = {
   selectUserCheckIdenType,
   selectUserStatusByIden,
   selectUserCheckIdenTypeKaKao,
+  updateUserSigninInfo
 };
 
