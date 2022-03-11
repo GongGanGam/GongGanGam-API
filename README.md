@@ -11,7 +11,7 @@
 
 ---
 
-<img width="626" alt="Screen Shot 2022-03-11 at 12 43 27 PM" src="https://user-images.githubusercontent.com/89574881/157797926-c7c3d415-3e7e-4507-9aa7-48f81463e460.png">
+<img width="626" alt="Screen Shot 2022-03-11 at 12 43 27 PM" src="https://user-images.githubusercontent.com/80459739/157798827-3002dda5-ce3d-48f1-86ac-475105c513f3.jpeg">
 
 
 # ERD
