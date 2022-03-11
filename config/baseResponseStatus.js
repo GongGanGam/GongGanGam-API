@@ -77,6 +77,7 @@ module.exports = {
     LOGIN_NAVER_TOKEN_ERROR : { "isSuccess": false, "code": 5026, "message": "토큰번호에 문제가 있습니다."},
     LOGIN_NAVER_ERROR : { "isSuccess": false, "code": 5027, "message": "네이버 로그인에 실패하였습니다."},
     // 5028 로그인 실패 회원가입해주세요
+    SIGNIN_ERROR : { "isSuccess": false, "code": 5029, "message": "회원가입이 잘못되었습니다. 다시 시도해주세요."},
 
     // 6000번 소연
     USER_BIRTHYEAR_EMPTY : {"isSuccess": false, "code": 6000, "message": "출생년도 값을 입력해주세요."},

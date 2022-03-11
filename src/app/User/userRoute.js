@@ -16,7 +16,7 @@ module.exports = function(app){
     app.post('/app/users/login', user.login);
 
     // 4. 유저 생성 (회원가입) API
-    app.post('/app/users', user.postUsers);
+    app.post('/app/users/signin', jwtMiddleware, user.postUsers);
 
     // 5. 회원 정보 수정 API
     app.patch('/app/users/:userIdx', jwtMiddleware, user.patchUsers);
