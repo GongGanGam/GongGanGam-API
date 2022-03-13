@@ -77,10 +77,10 @@ async function selectAnswer(connection, userIdx, pageSize, offset) {
     const params = [userIdx, pageSize, offset];
     const selectAnswerQuery = `
         select answerIdx, User.userIdx, nickname as userNickname, profImg as userProfImg, answerContents,
-               date_format(Answer.updatedAt, '%y.%m.%d') as answerDate, isRead
+               date_format(Answer.createdAt, '%y.%m.%d') as answerDate, isRead
         from Answer join Diary on Diary.diaryIdx=Answer.diaryIdx
                     join User on Diary.userIdx = User.userIdx
-        where answerUserIdx=? and Answer.status='ACTIVE' order by Answer.updatedAt  limit ? offset ?;
+        where answerUserIdx=? and Answer.status='ACTIVE' order by Answer.createdAt  limit ? offset ?;
                 `;
     const [diaryInfo] = await connection.query(selectAnswerQuery, params);
     return diaryInfo;
@@ -244,6 +244,17 @@ async function updateDiaryReadStatus(connection, diaryIdx) {
     return updateUserRow[0];
 }
 
+// 답장 읽은 상태 수정하기
+async function updateAnswerReadStatus(connection, answerIdx) {
+    const params = ['T', answerIdx]
+    const updateDiaryReadQuery = `
+        UPDATE Answer 
+        SET isRead = ?
+        WHERE answerIdx = ?;`;
+    const updateUserRow = await connection.query(updateDiaryReadQuery, params);
+    return updateUserRow[0];
+}
+
 // 다이어리 수정하기
 async function updateDiary(connection, params) {
     const updateReviewQuery = `
@@ -325,5 +336,5 @@ module.exports = {
     selectDiaryDetail, selectAnswerDetail, insertAnswer, selectRandUser, updateDiary,
     insertShare, insertDiaryImg, selectAllShareList, selectAllAnswer, updateDiaryReadStatus,
     checkDiaryShareUser, checkShareAgree, checkAnswerExists, selectDiaryByAnswerIdx,
-    selectAnswerByIdx, updateAnswerReject, checkDiaryAnswerValid
+    selectAnswerByIdx, updateAnswerReject, checkDiaryAnswerValid, updateAnswerReadStatus
 };
