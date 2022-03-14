@@ -141,6 +141,22 @@ exports.updateDiaryIsRead = async function (diaryIdx) {
     }
 };
 
+exports.updateAnswerIsRead = async function (answerIdx) {
+    try {
+
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const updateAnswerReadResult = await diaryDao.updateAnswerReadStatus(connection, answerIdx);
+
+        connection.release();
+        return 1;
+
+    } catch (err) {
+        logger.error(`App - updateDiaryIsRead Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};
+
 exports.updateDiary = async function (diaryIdx, userIdx, date, emoji, content, shareAgree) {
     try {
 

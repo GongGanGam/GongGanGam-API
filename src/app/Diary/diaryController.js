@@ -145,8 +145,10 @@ exports.getAnswer = async function (req, res) {
     if (answerCheckResult[0].answerUserIdx !== userIdx) return res.send(errResponse(baseResponse.ANSWER_USERIDX_INVALID));
 
     const answerResult = await diaryProvider.retrieveAnswerByIdx(answerIdx, userIdx);
+    // 확인한 답장 업데이트
+    const answerReadCheckResult = await diaryService.updateAnswerIsRead(answerIdx);
+    if (answerReadCheckResult !== 1) return res.send(answerReadCheckResult);
 
-    //if (answerResult.answer.length <1) return res.send(errResponse(baseResponse.ANSWER_DIARY_NOT_EXIST));
 
     return res.send(response(baseResponse.SUCCESS, answerResult));
 
