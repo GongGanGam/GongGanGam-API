@@ -128,18 +128,18 @@ exports.createUser = async function (nickname, birthYear, gender, type, email, i
         const connection = await pool.getConnection(async (conn) => conn);
 
         //닉네임 중복 방지
-        const userNicknameRows = await userProvider.userNicknameCheck(nickname);
-        if (userNicknameRows.length > 0)
-            return errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME);
+        // const userNicknameRows = await userProvider.userNicknameCheck(nickname);
+        // if (userNicknameRows.length > 0)
+        //     return errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME);
         //이메일 중복 방지
-        const userEmailRows = await userProvider.userEmailCheck(email);
-        if (userEmailRows.length > 0)
-            return errResponse(baseResponse.SIGNUP_EMAIL_EXISTS);
+        // const userEmailRows = await userProvider.userEmailCheck(email);
+        // if (userEmailRows.length > 0)
+        //     return errResponse(baseResponse.SIGNUP_EMAIL_EXISTS);
 
-        const hashedIdetification = await crypto
-            .createHash("sha512")
-            .update(identification)
-            .digest("hex");
+        // const hashedIdetification = await crypto
+        //     .createHash("sha512")
+        //     .update(identification)
+        //     .digest("hex");
         try {
             const insertUserInfoParams = [nickname, birthYear, gender, type, email, identification];
             await connection.beginTransaction();
@@ -160,7 +160,7 @@ exports.createUser = async function (nickname, birthYear, gender, type, email, i
             );
 
             await connection.commit();
-            return response(baseResponse.SUCCESS, {'userIdx': userNicknameResult[0].insertId, 'jwt': token});
+            return {'userIdx': userNicknameResult[0].insertId, 'jwt': token};
         }
         catch (err) {
             await connection.rollback();
