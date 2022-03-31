@@ -23,6 +23,18 @@ async function checkUserExists(connection, userIdx) {
     return diaryInfo;
 }
 
+// 채팅에 추가된 사용자인지 확인
+async function checkUserChatValid(connection, params) {
+    const selectUserQuery = `
+        select chatIdx
+        from Chat
+        where myUserIdx = ? and chatUserIdx=?;
+                `;
+    const [diaryInfo] = await connection.query(selectUserQuery, params);
+    return diaryInfo;
+}
+
+// 채팅 리스트 조회
 async function selectChatList(connection, userIdx) {
     const selectChatQuery = `
         select chatUserIdx, nickname, profImg
@@ -34,5 +46,5 @@ async function selectChatList(connection, userIdx) {
 }
 
 module.exports = {
-    insertChat, checkUserExists, selectChatList
+    insertChat, checkUserExists, selectChatList, checkUserChatValid
 };

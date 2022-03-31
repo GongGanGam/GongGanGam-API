@@ -24,7 +24,9 @@ exports.postChatUsers = async function (req, res) {
     // 존재하는 유저인지 확인
     const userCheckResult = await chatProvider.checkUser(chatUserIdx);
     if (userCheckResult.length<1) return res.send(errResponse(baseResponse.USER_NOT_EXIST));
-    // 답장이 왔던 유저인지 확인
+    // 이미 추가한 유저인지 확인
+    const userValidCheck = await chatProvider.checkUserChatValid(userIdx, chatUserIdx);
+    if (userValidCheck.length>0) return res.send(errResponse(baseResponse.CHAT_USER_INVALID));
 
 
     const postChatResponse = await chatService.createChatUser(userIdx, chatUserIdx);

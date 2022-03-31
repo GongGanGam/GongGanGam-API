@@ -78,6 +78,7 @@ module.exports = {
     LOGIN_NAVER_ERROR : { "isSuccess": false, "code": 5027, "message": "네이버 로그인에 실패하였습니다."},
     // 5028 로그인 실패 회원가입해주세요
     SIGNIN_ERROR : { "isSuccess": false, "code": 5029, "message": "회원가입이 잘못되었습니다. 다시 시도해주세요."},
+    CHAT_USER_INVALID : { "isSuccess": false, "code": 5030, "message": "이미 추가된 유저입니다."},
 
     // 6000번 소연
     USER_BIRTHYEAR_EMPTY : {"isSuccess": false, "code": 6000, "message": "출생년도 값을 입력해주세요."},
