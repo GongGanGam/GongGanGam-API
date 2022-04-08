@@ -21,7 +21,7 @@
 
 # ERD
 
-<img width="438" alt="Screen Shot 2022-03-11 at 12 38 55 PM" src="https://user-images.githubusercontent.com/80459739/162481886-5eafdec3-f414-416e-9d1e-e0ae4108c37c.png">
+<img width="438" alt="Screen Shot 2022-03-11 at 12 38 55 PM" src="https://user-images.githubusercontent.com/80459739/162482347-8e105d16-2054-4d73-9c5f-44c9ba490c61.png">
 
 # Tech Stack
 
