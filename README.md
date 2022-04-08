@@ -16,7 +16,7 @@
 # API Sheet
 
 
-<img width="626" alt="Screen Shot 2022-03-11 at 12 43 27 PM" src="https://user-images.githubusercontent.com/80459739/157798827-3002dda5-ce3d-48f1-86ac-475105c513f3.jpeg">
+<img width="626" alt="Screen Shot 2022-03-11 at 12 43 27 PM" src="https://user-images.githubusercontent.com/80459739/162481886-5eafdec3-f414-416e-9d1e-e0ae4108c37c.png">
 
 
 # ERD
