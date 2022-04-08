@@ -11,6 +11,30 @@ async function selectMonthDiary(connection, params) {
     return monthRows;
 }
 
+// 전 달의 이모티콘들 조회
+async function selectPreviousDiary(connection, params) {
+    const selectMonthDiaryQuery = `
+        select date_format(diaryDate, '%e') as day, emoji
+        from Diary
+        where userIdx=? and year(diaryDate) - ? = 0 and month(diaryDate) - ? =0  and day(diaryDate) > (? - 14) and status = 'ACTIVE'
+        order by diaryDate;
+    `;
+    const [monthRows] = await connection.query(selectMonthDiaryQuery, params);
+    return monthRows;
+}
+
+// 다음 달의 이모티콘들 조회
+async function selectNextDiary(connection, params) {
+    const selectMonthDiaryQuery = `
+        select date_format(diaryDate, '%e') as day, emoji
+        from Diary
+        where userIdx=? and year(diaryDate) - ? = 0 and month(diaryDate) - ? =0  and day(diaryDate) < 7 and status = 'ACTIVE'
+        order by diaryDate;
+    `;
+    const [monthRows] = await connection.query(selectMonthDiaryQuery, params);
+    return monthRows;
+}
+
 // 그날의 다이어리 가져오기
 async function selectDiary(connection, params) {
     const selectDeliveryQuery = `
@@ -336,5 +360,6 @@ module.exports = {
     selectDiaryDetail, selectAnswerDetail, insertAnswer, selectRandUser, updateDiary,
     insertShare, insertDiaryImg, selectAllShareList, selectAllAnswer, updateDiaryReadStatus,
     checkDiaryShareUser, checkShareAgree, checkAnswerExists, selectDiaryByAnswerIdx,
-    selectAnswerByIdx, updateAnswerReject, checkDiaryAnswerValid, updateAnswerReadStatus
+    selectAnswerByIdx, updateAnswerReject, checkDiaryAnswerValid, updateAnswerReadStatus,
+    selectPreviousDiary, selectNextDiary
 };

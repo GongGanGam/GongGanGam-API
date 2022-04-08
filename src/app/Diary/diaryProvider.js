@@ -9,11 +9,35 @@ const diaryDao = require("./diaryDao");
 exports.retrieveMonthList = async function (userIdx, year, month) {
     const params = [userIdx, year, month];
     const connection = await pool.getConnection(async (conn) => conn);
+
+    // 이전 달 (6일 전까지)
+    console.log(year, month)
+    let tmpMonth = month;
+    if (month == 1) tmpMonth = 13;
+
+    const lastDate = new Date(year, tmpMonth-1, 0).getDate();
+    console.log(lastDate)
+    const prevParams = [userIdx, year, tmpMonth-1, lastDate];
+    console.log(prevParams)
+    const previousList = await diaryDao.selectPreviousDiary(connection, prevParams);
+
+    // 현재 달
     const monthList = await diaryDao.selectMonthDiary(connection, params);
+
+    // 다음 달 (14일 후까지)
+    let tmpMonth2 = month;
+    if (month == 12) tmpMonth2 = 0;
+    let nextMonth = parseInt(tmpMonth2) + 1
+    const nextParams = [userIdx, year, nextMonth];
+    console.log(nextParams)
+    const nextList = await diaryDao.selectNextDiary(connection, nextParams);
+    console.log(nextList)
+
+    const monthDiary = {'previous' : previousList, 'current' : monthList, 'next' : nextList};
 
     connection.release();
 
-    return monthList;
+    return monthDiary;
 };
 
 exports.retrieveDiary = async function (userIdx, year, month, day) {
