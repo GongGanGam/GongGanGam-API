@@ -37,3 +37,60 @@ exports.getNotice = async function (req, res) {
     return res.send(response(baseResponse.SUCCESS, result));
 
 };
+
+/**
+ * API No. 29
+ * API Name : 신고하기 API
+ * [POST] /app/admin/report
+ */
+exports.postReport = async function (req, res) {
+
+    /**
+     * Body: content, diaryIdx
+     */
+
+    const {reportType, idxOfType, reportDetail, reportContent} = req.body;
+
+    const userIdx = req.verifiedToken.userIdx;
+    console.log('userIdx: ' + userIdx)
+
+    if (!(reportType == 'chat' || reportType == 'diary' || reportType == 'answer')) return res.send(errResponse(baseResponse.REPORT_TYPE_INVALID));
+
+    if (reportDetail > 3 || reportDetail < 1) return res.send(errResponse(baseResponse.REPORT_DETAIL_INVALID));
+
+    const postReportResponse = await adminService.createReport(userIdx, reportType, idxOfType, reportDetail, reportContent);
+    return res.send(postReportResponse);
+
+};
+
+/**
+ * API No. 30
+ * API Name : 신고내역 조회 API
+ * [GET] /app/admin/report
+ */
+exports.getReport = async function (req, res) {
+
+    const reportResult = await adminProvider.retrieveReport();
+
+    return res.send(response(baseResponse.SUCCESS, reportResult));
+
+};
+
+/**
+ * API No. 31
+ * API Name : 신고처리하기 API
+ * [PATCH] /app/admin/report
+ */
+exports.patchReport = async function (req, res) {
+
+    const {reportIdx} = req.body;
+
+    if (!reportIdx) return res.send(errResponse(baseResponse.REPORT_REPORTIDX_EMPTY));
+    // 없는 reportIdx 조회한 경우
+    const reportCheck = await adminProvider.checkReport(reportIdx);
+    if (reportCheck.length<1) return res.send(errResponse(baseResponse.REPORT_REPORTIDX_INVALID));
+
+    const patchReportResponse = await adminService.updateReport(reportIdx);
+    return res.send(patchReportResponse);
+
+};

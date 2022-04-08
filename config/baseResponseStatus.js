@@ -79,6 +79,11 @@ module.exports = {
     // 5028 로그인 실패 회원가입해주세요
     SIGNIN_ERROR : { "isSuccess": false, "code": 5029, "message": "회원가입이 잘못되었습니다. 다시 시도해주세요."},
     CHAT_USER_INVALID : { "isSuccess": false, "code": 5030, "message": "이미 추가된 유저입니다."},
+    REPORT_TYPE_INVALID: { "isSuccess": false, "code": 5031, "message": "신고 타입이 잘못되었습니다.(채팅/다이어리/답장)"},
+    REPORT_DETAIL_INVALID: { "isSuccess": false, "code": 5032, "message": "신고한 종류가 잘못되었습니다."},
+    REPORT_REPORTIDX_EMPTY: { "isSuccess": false, "code": 5033, "message": "신고idx를 입력해주세요."},
+    REPORT_REPORTIDX_INVALID: { "isSuccess": false, "code": 5034, "message": "존재하지 않는 신고입니다."},
+
 
     // 6000번 소연
     USER_BIRTHYEAR_EMPTY : {"isSuccess": false, "code": 6000, "message": "출생년도 값을 입력해주세요."},

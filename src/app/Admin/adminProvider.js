@@ -23,3 +23,21 @@ exports.retrieveAllNotice = async function () {
 
     return noticeList;
 };
+
+exports.retrieveReport = async function () {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const reportList = await adminDao.selectReport(connection);
+
+    connection.release();
+
+    return reportList;
+};
+
+exports.checkReport = async function (reportIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const report = await adminDao.selectReportByIdx(connection, reportIdx);
+
+    connection.release();
+
+    return report;
+};
