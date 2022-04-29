@@ -13,14 +13,15 @@ exports.retrieveMonthList = async function (userIdx, year, month) {
     // 이전 달 (6일 전까지)
     console.log(year, month)
     let tmpMonth = month;
+    let tmpYear = year;
     if (month == 1) {
         tmpMonth = 13;
-        year = year - 1;
+        tmpYear = tmpYear - 1;
     }
 
-    const lastDate = new Date(year, tmpMonth-1, 0).getDate();
+    const lastDate = new Date(tmpYear, tmpMonth-1, 0).getDate();
     console.log(lastDate)
-    const prevParams = [userIdx, year, tmpMonth-1, lastDate];
+    const prevParams = [userIdx, tmpYear, tmpMonth-1, lastDate];
     console.log(prevParams)
     const previousList = await diaryDao.selectPreviousDiary(connection, prevParams);
 
@@ -29,12 +30,13 @@ exports.retrieveMonthList = async function (userIdx, year, month) {
 
     // 다음 달 (14일 후까지)
     let tmpMonth2 = month;
+    let tmpYear2 = year;
     if (month == 12) {
         tmpMonth2 = 0;
-        year = year + 1;
+        tmpYear2 = tmpYear2 + 1;
     }
     let nextMonth = parseInt(tmpMonth2) + 1
-    const nextParams = [userIdx, year, nextMonth];
+    const nextParams = [userIdx, tmpYear2, nextMonth];
     console.log(nextParams)
     const nextList = await diaryDao.selectNextDiary(connection, nextParams);
     console.log(nextList)
