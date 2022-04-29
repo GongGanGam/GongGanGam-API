@@ -56,7 +56,7 @@ exports.postReport = async function (req, res) {
 
     if (!(reportType == 'chat' || reportType == 'diary' || reportType == 'answer')) return res.send(errResponse(baseResponse.REPORT_TYPE_INVALID));
 
-    if (reportDetail > 3 || reportDetail < 1) return res.send(errResponse(baseResponse.REPORT_DETAIL_INVALID));
+    if (reportDetail > 4 || reportDetail < 1) return res.send(errResponse(baseResponse.REPORT_DETAIL_INVALID));
 
     const postReportResponse = await adminService.createReport(userIdx, reportType, idxOfType, reportDetail, reportContent);
     return res.send(postReportResponse);
