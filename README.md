@@ -16,12 +16,12 @@
 # API Sheet
 
 
-<img width="626" alt="Screen Shot 2022-03-11 at 12 43 27 PM" src="https://user-images.githubusercontent.com/80459739/157798827-3002dda5-ce3d-48f1-86ac-475105c513f3.jpeg">
+<img width="626" alt="Screen Shot 2022-03-11 at 12 43 27 PM" src="https://user-images.githubusercontent.com/80459739/162481886-5eafdec3-f414-416e-9d1e-e0ae4108c37c.png">
 
 
 # ERD
 
-<img width="438" alt="Screen Shot 2022-03-11 at 12 38 55 PM" src="https://user-images.githubusercontent.com/89574881/157797501-755dc8db-4ce2-4ff9-afbb-dc0af4bdac1e.png">
+<img width="438" alt="Screen Shot 2022-03-11 at 12 38 55 PM" src="https://user-images.githubusercontent.com/80459739/162482347-8e105d16-2054-4d73-9c5f-44c9ba490c61.png">
 
 # Tech Stack
 
