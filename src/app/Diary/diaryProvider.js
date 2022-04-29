@@ -13,7 +13,10 @@ exports.retrieveMonthList = async function (userIdx, year, month) {
     // 이전 달 (6일 전까지)
     console.log(year, month)
     let tmpMonth = month;
-    if (month == 1) tmpMonth = 13;
+    if (month == 1) {
+        tmpMonth = 13;
+        year = year - 1;
+    }
 
     const lastDate = new Date(year, tmpMonth-1, 0).getDate();
     console.log(lastDate)
@@ -26,7 +29,10 @@ exports.retrieveMonthList = async function (userIdx, year, month) {
 
     // 다음 달 (14일 후까지)
     let tmpMonth2 = month;
-    if (month == 12) tmpMonth2 = 0;
+    if (month == 12) {
+        tmpMonth2 = 0;
+        year = year + 1;
+    }
     let nextMonth = parseInt(tmpMonth2) + 1
     const nextParams = [userIdx, year, nextMonth];
     console.log(nextParams)

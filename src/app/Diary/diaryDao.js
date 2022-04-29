@@ -16,7 +16,7 @@ async function selectPreviousDiary(connection, params) {
     const selectMonthDiaryQuery = `
         select date_format(diaryDate, '%e') as day, emoji
         from Diary
-        where userIdx=? and year(diaryDate) - ? = 0 and month(diaryDate) - ? =0  and day(diaryDate) > (? - 14) and status = 'ACTIVE'
+        where userIdx=? and year(diaryDate) - ? = 0 and month(diaryDate) - ? =0  and day(diaryDate) > (? - 6) and status = 'ACTIVE'
         order by diaryDate;
     `;
     const [monthRows] = await connection.query(selectMonthDiaryQuery, params);
@@ -28,7 +28,7 @@ async function selectNextDiary(connection, params) {
     const selectMonthDiaryQuery = `
         select date_format(diaryDate, '%e') as day, emoji
         from Diary
-        where userIdx=? and year(diaryDate) - ? = 0 and month(diaryDate) - ? =0  and day(diaryDate) < 7 and status = 'ACTIVE'
+        where userIdx=? and year(diaryDate) - ? = 0 and month(diaryDate) - ? =0  and day(diaryDate) < 14 and status = 'ACTIVE'
         order by diaryDate;
     `;
     const [monthRows] = await connection.query(selectMonthDiaryQuery, params);
