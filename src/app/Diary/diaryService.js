@@ -46,6 +46,7 @@ exports.createDiary = async function (userIdx, date, emoji, content, shareAgree)
         } catch (err) {
             console.log(err);
             await connection.rollback();
+            return errResponse(baseResponse.DB_ERROR);
         } finally {
             connection.release();
         }
