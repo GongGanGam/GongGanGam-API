@@ -338,3 +338,19 @@ exports.updateUserImg = async function (userIdx, imgUrl) {
         return errResponse(baseResponse.DB_ERROR);
     }
 }
+
+// 기기별 토큰값 업로드
+exports.patchDeviceToken = async function (userIdx, deviceToken) {
+    try {
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const editDeviceToken = await userDao.updateDeviceToken(connection, userIdx, deviceToken);
+        connection.release();
+
+        return 1;
+
+    } catch (err) {
+        logger.error(`App - patchDeviceToken Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+}

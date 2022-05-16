@@ -74,7 +74,7 @@ module.exports = {
     DIARY_SHAREAGREE_INVALID : { "isSuccess": false, "code": 5023, "message": "공유 설정이 잘못되었습니다."},
     ANSWER_ANSWERIDX_NOT_EXIST : { "isSuccess": false, "code": 5024, "message": "존재하지 않는 답장입니다."},
     LOGIN_NAVER_IDENTIFICATION_ERROR : { "isSuccess": false, "code": 5025, "message": "식별번호에 문제가 있습니다."},
-    LOGIN_NAVER_TOKEN_ERROR : { "isSuccess": false, "code": 5026, "message": "토큰번호에 문제가 있습니다."},
+    LOGIN_NAVER_TOKEN_ERROR : { "isSuccess": false, "code": 5026, "message": "네이버 토큰번호에 문제가 있습니다."},
     LOGIN_NAVER_ERROR : { "isSuccess": false, "code": 5027, "message": "네이버 로그인에 실패하였습니다."},
     // 5028 로그인 실패 회원가입해주세요
     SIGNIN_ERROR : { "isSuccess": false, "code": 5029, "message": "회원가입이 잘못되었습니다. 다시 시도해주세요."},
@@ -83,6 +83,7 @@ module.exports = {
     REPORT_DETAIL_INVALID: { "isSuccess": false, "code": 5032, "message": "신고한 종류가 잘못되었습니다."},
     REPORT_REPORTIDX_EMPTY: { "isSuccess": false, "code": 5033, "message": "신고idx를 입력해주세요."},
     REPORT_REPORTIDX_INVALID: { "isSuccess": false, "code": 5034, "message": "존재하지 않는 신고입니다."},
+    LOGIN_DEVICETOKEN_EMPTY: { "isSuccess": false, "code": 5035, "message": "디바이스 토큰값을 입력해주세요."},
 
 
     // 6000번 소연

@@ -28,7 +28,7 @@ exports.getTest = async function (req, res) {
  */
 exports.loginKakao = async function (req, res) {
 
-    const { token } = req.body;
+    const { token, deviceToken } = req.body;
     var header = 'Bearer ' + token; // Bearer 다음에 공백 추가
     console.log('token ' + token);
 
@@ -50,14 +50,24 @@ exports.loginKakao = async function (req, res) {
             console.log(email);
             console.log('id: ' + identification)
 
+            if (!deviceToken) return res.send(response(baseResponse.LOGIN_DEVICETOKEN_EMPTY));
+
             // DB에 유저 있는지 확인 후, 없으면 로그인 처리
             const userExist = await userProvider.checkUserExist(email, identification);
             console.log(userExist)
             if (userExist.length > 0) {
+
                 const signInResponse = await userService.postKaKaoLogin(identification);
+
+                const userIdx = signInResponse.result.userIdx;
+                console.log(userIdx);
+
+                // 기기 토큰값 입력 (수정하기)
+                const patchDeviceToken = await userService.patchDeviceToken(userIdx, deviceToken);
+                if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
                 return res.send(signInResponse);
             }
-            // 회원가입하게 받은 정보 리턴해주기.
+
             else {
 
                 const signinResponse = await userService.createUser("nickname", 2000, "N", "kakao", email, identification);
@@ -121,6 +131,14 @@ exports.loginNaver = async function (req, res) {
             console.log(userByIden)
             if (userByIden.length>0) {
                 const signInResponse = await userService.postNaverLogin(identification);
+
+                const userIdx = signInResponse.result.userIdx;
+                console.log(userIdx);
+
+                // 기기 토큰값 입력 (수정하기)
+                const patchDeviceToken = await userService.patchDeviceToken(userIdx, deviceToken);
+                if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
+
                 return res.send(signInResponse);
             }
             // 회원가입처리.

@@ -250,6 +250,16 @@ async function updateUserImg(connection, userIdx, imgUrl){
   return updateUserImgRow[0];
 }
 
+async function updateDeviceToken(connection, userIdx, deviceToken){
+  const params = [deviceToken, userIdx];
+  const updateDeviceTokenQuery = `
+    UPDATE User
+    SET deviceToken = ?
+    WHERE userIdx = ?;`;
+  const updateUserImgRow = await connection.query(updateDeviceTokenQuery,params);
+  return updateUserImgRow[0];
+}
+
 module.exports = {
   selectUser,
   selectUserNickname,
@@ -273,6 +283,7 @@ module.exports = {
   selectUserCheckIdenType,
   selectUserStatusByIden,
   selectUserCheckIdenTypeKaKao,
-  updateUserSigninInfo
+  updateUserSigninInfo,
+  updateDeviceToken
 };
 
