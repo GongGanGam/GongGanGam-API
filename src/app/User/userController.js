@@ -29,6 +29,7 @@ exports.getTest = async function (req, res) {
 exports.loginKakao = async function (req, res) {
 
     const { token, deviceToken } = req.body;
+
     var header = 'Bearer ' + token; // Bearer 다음에 공백 추가
     console.log('token ' + token);
 
@@ -103,7 +104,8 @@ exports.loginKakao = async function (req, res) {
  */
 exports.loginNaver = async function (req, res) {
 
-    const { token } = req.body;
+    const { token, deviceToken } = req.body;
+
     var header = "bearer " + token; // Bearer 다음에 공백 추가
     console.log('token ' + token);
 

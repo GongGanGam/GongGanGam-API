@@ -84,6 +84,7 @@ module.exports = {
     REPORT_REPORTIDX_EMPTY: { "isSuccess": false, "code": 5033, "message": "신고idx를 입력해주세요."},
     REPORT_REPORTIDX_INVALID: { "isSuccess": false, "code": 5034, "message": "존재하지 않는 신고입니다."},
     LOGIN_DEVICETOKEN_EMPTY: { "isSuccess": false, "code": 5035, "message": "디바이스 토큰값을 입력해주세요."},
+    LOGIN_TOKEN_EMPTY: { "isSuccess": false, "code": 5036, "message": "로그인 토큰값을 입력해주세요."},
 
 
     // 6000번 소연
