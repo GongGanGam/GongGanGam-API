@@ -45,6 +45,20 @@ async function insertReport(connection, insertReportParams) {
     return insertReportRow;
 }
 
+// 공지사항 쓰기
+async function insertNotice(connection, insertReportParams) {
+    const insertNoticeQuery = `
+        INSERT INTO Notice(title, noticeContent)
+        VALUES (?, ?);
+    `;
+    const insertReportRow = await connection.query(
+        insertNoticeQuery,
+        insertReportParams
+    );
+
+    return insertReportRow;
+}
+
 // 다이어리 status를 F로 수정하기
 async function updateReportHandled(connection, params) {
     const updateReviewQuery = `
@@ -67,6 +81,7 @@ async function selectReportByIdx(connection, reportIdx) {
 }
 
 module.exports = {
-    selectNoticeList, selectAllNoticeList, insertReport, selectReport, updateReportHandled, selectReportByIdx
+    selectNoticeList, selectAllNoticeList, insertReport, selectReport, updateReportHandled, selectReportByIdx,
+    insertNotice,
 };
 

@@ -50,3 +50,23 @@ exports.updateReport = async function (reportIdx) {
         return errResponse(baseResponse.DB_ERROR);
     }
 };
+
+exports.createNotice = async function (title, noticeContent) {
+    try {
+
+        // 쿼리문에 사용할 변수 값을 배열 형태로 전달
+        const insertNoticeParams = [title, noticeContent];
+        console.log(insertNoticeParams);
+
+        const connection = await pool.getConnection(async (conn) => conn);
+
+        const noticeResponse = await adminDao.insertNotice(connection, insertNoticeParams);
+
+        connection.release();
+        return response(baseResponse.SUCCESS);
+
+    } catch (err) {
+        logger.error(`App - createNotice Service error\n: ${err.message}`);
+        return errResponse(baseResponse.DB_ERROR);
+    }
+};

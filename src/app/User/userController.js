@@ -266,7 +266,7 @@ exports.getUserById = async function (req, res) {
     const userIdx = req.params.userIdx;
 
     if (userIdFromJWT != userIdx) {
-        res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
+        return res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
     } else {
         const userByUserIdx = await userProvider.userIdCheck(userIdx);
         return res.send(response(baseResponse.SUCCESS, userByUserIdx[0]));

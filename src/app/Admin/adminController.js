@@ -39,6 +39,29 @@ exports.getNotice = async function (req, res) {
 };
 
 /**
+ * API No. 23
+ * API Name : 공지사항 쓰기 API
+ * [POST] /app/admin/notice
+ */
+exports.postNotice = async function (req, res) {
+
+    /**
+     * Body: title, noticeContent
+     */
+
+    const {title, noticeContent} = req.body;
+
+    const userIdx = req.verifiedToken.userIdx;
+    console.log('userIdx: ' + userIdx)
+
+    if (userIdx != 53) return res.send(errResponse(baseResponse.NOTICE_MANAGER_INVALID));
+
+    const postNoticeResponse = await adminService.createNotice(title, noticeContent);
+    return res.send(postNoticeResponse);
+
+};
+
+/**
  * API No. 29
  * API Name : 신고하기 API
  * [POST] /app/admin/report
