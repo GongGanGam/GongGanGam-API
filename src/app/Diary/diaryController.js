@@ -280,6 +280,35 @@ exports.postDiary = async function (req, res) {
                 console.log(`File uploaded successfully.`);
                 console.log(data.Location)
                 const diaryResponse = await diaryService.createDiaryImg(userIdx, date, emoji, content, shareAgree, data.Location);
+
+                //let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
+                // 보낼 유저의 deviceToken 가져오기
+                let deviceToken = await diaryProvider.retrieveDeviceToken(userIdx)
+                admin.initializeApp({
+                    credential: admin.credential.cert(fcmAccount),
+
+                });
+
+                let message = {
+                    notification: {
+                        title: '쑤이',
+                        body: '쏘사랑해><',
+                    },
+                    token: deviceToken,
+                }
+
+                admin
+                    .messaging()
+                    .send(message)
+                    .then(function(fcmres){
+                        console.log('Successfully sent message:', fcmres)
+                        return res.send(response(baseResponse.SUCCESS));
+                    })
+                    .catch(function(err) {
+                        console.log('Error Sending message!!! : ', err)
+                        return res.send(errResponse(baseResponse.USER_PUSH_ERROR));
+                    });
+
                 return res.send(diaryResponse);
 
             }

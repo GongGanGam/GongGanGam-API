@@ -7,8 +7,9 @@ const yearNow = require("date-utils");
 const regexEmail = require("regex-email");
 const s3Client = require("../../../config/s3");
 const naver = require("../../../config/naver");
-//const kakao = require("../../../config/kakao");
-
+const kakao = require("../../../config/kakao");
+const fcmAccount = require("../../../config/test-a9c79-firebase-adminsdk-t1wyq-b50493c592.json");
+const admin = require('firebase-admin');
 const AWS = require('aws-sdk');
 
 /**
@@ -427,4 +428,38 @@ exports.patchProfImg = async function (req, res) {
             }
         });
     }
+};
+
+/**
+ * API No.
+ * API Name : 푸시 알림 테스트 API
+ * [GET] /app/users/push/test
+ */
+exports.getPush = async function (req, res) {
+    let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
+    admin.initializeApp({
+        credential: admin.credential.cert(fcmAccount),
+
+    });
+
+    let message = {
+        notification: {
+            title: '쑤이',
+            body: '쏘사랑해><',
+        },
+        token: deviceToken,
+    }
+
+    admin
+        .messaging()
+        .send(message)
+        .then(function(fcmres){
+            console.log('Successfully sent message:', fcmres)
+            return res.send(response(baseResponse.SUCCESS));
+        })
+        .catch(function(err) {
+            console.log('Error Sending message!!! : ', err)
+            return res.send(errResponse(baseResponse.USER_PUSH_ERROR));
+        });
+
 };

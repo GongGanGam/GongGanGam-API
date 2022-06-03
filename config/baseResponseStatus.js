@@ -86,6 +86,7 @@ module.exports = {
     LOGIN_DEVICETOKEN_EMPTY: { "isSuccess": false, "code": 5035, "message": "디바이스 토큰값을 입력해주세요."},
     LOGIN_TOKEN_EMPTY: { "isSuccess": false, "code": 5036, "message": "로그인 토큰값을 입력해주세요."},
     NOTICE_MANAGER_INVALID: { "isSuccess": false, "code": 5037, "message": "관리자만 사용할 수 있는 기능입니다."},
+    USER_PUSH_ERROR: { "isSuccess": false, "code": 5038, "message": "푸시 알림에 문제가 있습니다. 문의해주세요."},
 
     // 6000번 소연
     USER_BIRTHYEAR_EMPTY : {"isSuccess": false, "code": 6000, "message": "출생년도 값을 입력해주세요."},

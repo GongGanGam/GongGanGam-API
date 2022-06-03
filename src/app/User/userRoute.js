@@ -39,4 +39,7 @@ module.exports = function(app){
     // 25. 유저 프로필 사진 업로드(수정)
     app.patch('/app/users/:userIdx/profile', jwtMiddleware, user.patchProfImg);
 
+    // 푸시 알림 테스트
+    app.get('/app/users/push/test', jwtMiddleware, user.getPush);
+
 };
