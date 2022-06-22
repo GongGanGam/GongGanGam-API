@@ -5,10 +5,11 @@ const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
 const s3Client = require("../../../config/s3");
 const AWS = require('aws-sdk');
-
 const formidable = require('formidable')
 const fs = require('fs');
 
+const admin = require('firebase-admin');
+const fcmAccount = require("../../../config/test-a9c79-firebase-adminsdk-t1wyq-b50493c592.json");
 // const admin = require("firebase-admin");
 //
 // let serviceAccount = require("../../../config/firebase_admin.json");
@@ -250,6 +251,36 @@ exports.postDiary = async function (req, res) {
     if (!req.files) {
         console.log('no file');
         const postdiaryResponse = await diaryService.createDiary(userIdx, date, emoji, content, shareAgree);
+
+        // 유저에게 푸시 알림 보내기 (FCM)
+        // 보낼 유저의 deviceToken 가져오기
+        // createDiary에서 random 유저 가져오는데 이거 어떻게 가져오징..
+        let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
+        admin.initializeApp({
+            credential: admin.credential.cert(fcmAccount),
+
+        });
+
+        let message = {
+            notification: {
+                title: '다이어리가 도착했어요!',
+                body: '',
+            },
+            token: deviceToken,
+        }
+
+        admin
+            .messaging()
+            .send(message)
+            .then(function(fcmres){
+                console.log('Successfully sent message:', fcmres)
+                //return res.send(response(baseResponse.SUCCESS));
+            })
+            .catch(function(err) {
+                console.log('Error Sending message!!! : ', err)
+                return res.send(errResponse(baseResponse.USER_PUSH_ERROR));
+            });
+
         return res.send(postdiaryResponse);
     }
     // 파일 잇는 경우
@@ -281,33 +312,7 @@ exports.postDiary = async function (req, res) {
                 console.log(data.Location)
                 const diaryResponse = await diaryService.createDiaryImg(userIdx, date, emoji, content, shareAgree, data.Location);
 
-                //let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
-                // 보낼 유저의 deviceToken 가져오기
-                let deviceToken = await diaryProvider.retrieveDeviceToken(userIdx)
-                admin.initializeApp({
-                    credential: admin.credential.cert(fcmAccount),
 
-                });
-
-                let message = {
-                    notification: {
-                        title: '쑤이',
-                        body: '쏘사랑해><',
-                    },
-                    token: deviceToken,
-                }
-
-                admin
-                    .messaging()
-                    .send(message)
-                    .then(function(fcmres){
-                        console.log('Successfully sent message:', fcmres)
-                        return res.send(response(baseResponse.SUCCESS));
-                    })
-                    .catch(function(err) {
-                        console.log('Error Sending message!!! : ', err)
-                        return res.send(errResponse(baseResponse.USER_PUSH_ERROR));
-                    });
 
                 return res.send(diaryResponse);
 
@@ -335,6 +340,33 @@ exports.postAnswer = async function (req, res) {
     console.log('userIdx: ' + userIdx)
 
     const postAnswerResponse = await diaryService.createAnswer(userIdx, diaryIdx, content);
+
+    let deviceToken = '';
+    admin.initializeApp({
+        credential: admin.credential.cert(fcmAccount),
+
+    });
+
+    let message = {
+        notification: {
+            title: '답장이 도착했어요!',
+            body: '',
+        },
+        token: deviceToken,
+    }
+
+    admin
+        .messaging()
+        .send(message)
+        .then(function(fcmres){
+            console.log('Successfully sent message:', fcmres)
+            //return res.send(response(baseResponse.SUCCESS));
+        })
+        .catch(function(err) {
+            console.log('Error Sending message!!! : ', err)
+            return res.send(errResponse(baseResponse.USER_PUSH_ERROR));
+        });
+    
     return res.send(postAnswerResponse);
 
 };
@@ -398,6 +430,32 @@ exports.patchDiary = async function (req, res) {
     if (!(shareAgree === 'T' || shareAgree === 'F')) return res.send(errResponse(baseResponse.DIARY_SHAREAGREE_INVALID));
 
     const patchdiaryResponse = await diaryService.updateDiary(diaryIdx, userIdx, date, emoji, content, shareAgree);
+
+    let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
+    admin.initializeApp({
+        credential: admin.credential.cert(fcmAccount),
+
+    });
+
+    let message = {
+        notification: {
+            title: '다이어리가 도착했어요!',
+            body: '',
+        },
+        token: deviceToken,
+    }
+
+    admin
+        .messaging()
+        .send(message)
+        .then(function(fcmres){
+            console.log('Successfully sent message:', fcmres)
+            //return res.send(response(baseResponse.SUCCESS));
+        })
+        .catch(function(err) {
+            console.log('Error Sending message!!! : ', err)
+            return res.send(errResponse(baseResponse.USER_PUSH_ERROR));
+        });
     return res.send(patchdiaryResponse);
 
 };

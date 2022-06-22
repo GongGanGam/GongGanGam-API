@@ -30,6 +30,33 @@ exports.postChatUsers = async function (req, res) {
 
 
     const postChatResponse = await chatService.createChatUser(userIdx, chatUserIdx);
+
+    let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
+    admin.initializeApp({
+        credential: admin.credential.cert(fcmAccount),
+
+    });
+
+    let message = {
+        notification: {
+            title: '채팅이 시작되었어요!',
+            body: '',
+        },
+        token: deviceToken,
+    }
+
+    admin
+        .messaging()
+        .send(message)
+        .then(function(fcmres){
+            console.log('Successfully sent message:', fcmres)
+            //return res.send(response(baseResponse.SUCCESS));
+        })
+        .catch(function(err) {
+            console.log('Error Sending message!!! : ', err)
+            return res.send(errResponse(baseResponse.USER_PUSH_ERROR));
+        });
+
     return res.send(postChatResponse);
 
 };
