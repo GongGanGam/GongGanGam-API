@@ -31,7 +31,9 @@ exports.postChatUsers = async function (req, res) {
 
     const postChatResponse = await chatService.createChatUser(userIdx, chatUserIdx);
 
-    let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
+    // chatUserIdx에 채팅 시작했다는 알림 추가.
+    const chatUserToken = await chatProvider.getChatUserToken(chatUserIdx);
+    let deviceToken = chatUserToken[0].deviceToken;
     admin.initializeApp({
         credential: admin.credential.cert(fcmAccount),
 

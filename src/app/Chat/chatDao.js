@@ -34,6 +34,17 @@ async function checkUserChatValid(connection, params) {
     return diaryInfo;
 }
 
+// 채팅 상대의 token 값 가져오기
+async function checkChatUserToken(connection, chatUserIdx) {
+    const selectUserQuery = `
+        select deviceToken
+        from User
+        where userIdx = ?;
+                `;
+    const [userToken] = await connection.query(selectUserQuery, chatUserIdx);
+    return userToken;
+}
+
 // 채팅 리스트 조회
 async function selectChatList(connection, userIdx) {
     const selectChatQuery = `
@@ -46,5 +57,5 @@ async function selectChatList(connection, userIdx) {
 }
 
 module.exports = {
-    insertChat, checkUserExists, selectChatList, checkUserChatValid
+    insertChat, checkUserExists, selectChatList, checkUserChatValid, checkChatUserToken
 };

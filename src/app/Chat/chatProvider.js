@@ -33,3 +33,12 @@ exports.checkUserChatValid = async function (userIdx, chatUserIdx) {
 
     return user;
 };
+
+exports.getChatUserToken = async function (chatUserIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const userToken = await chatDao.checkChatUserToken(connection, chatUserIdx);
+
+    connection.release();
+
+    return userToken;
+};
