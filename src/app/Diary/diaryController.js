@@ -341,7 +341,10 @@ exports.postAnswer = async function (req, res) {
 
     const postAnswerResponse = await diaryService.createAnswer(userIdx, diaryIdx, content);
 
-    let deviceToken = '';
+    // 해당 다이어리 쓴 사람의 deviceToken 가져오기
+    const getDiaryUser = await diaryProvider.getDiaryUser(diaryIdx);
+    console.log(getDiaryUser[0].deviceToken)
+    let deviceToken = getDiaryUser[0].deviceToken;
     admin.initializeApp({
         credential: admin.credential.cert(fcmAccount),
 
@@ -431,6 +434,7 @@ exports.patchDiary = async function (req, res) {
 
     const patchdiaryResponse = await diaryService.updateDiary(diaryIdx, userIdx, date, emoji, content, shareAgree);
 
+    // shareAgree T면 랜덤 유저의 deviceToken 가져오기.
     let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
     admin.initializeApp({
         credential: admin.credential.cert(fcmAccount),

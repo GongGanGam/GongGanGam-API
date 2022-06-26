@@ -190,6 +190,17 @@ async function selectRandUser(connection, userIdx) {
     return diaryInfo;
 }
 
+// 다이어리 쓴 유저의 토큰값 가져오기
+async function getDiaryUserToken(connection, diaryIdx) {
+    const selectUserTokenQuery = `
+        select deviceToken
+        from Diary join User on Diary.userIdx=User.userIdx
+        where diaryIdx=?;
+                `;
+    const [diaryInfo] = await connection.query(selectUserTokenQuery, diaryIdx);
+    return diaryInfo;
+}
+
 // 다이어리 생성
 async function insertDiary(connection, insertDiaryParams) {
     const insertDiaryQuery = `
@@ -361,5 +372,5 @@ module.exports = {
     insertShare, insertDiaryImg, selectAllShareList, selectAllAnswer, updateDiaryReadStatus,
     checkDiaryShareUser, checkShareAgree, checkAnswerExists, selectDiaryByAnswerIdx,
     selectAnswerByIdx, updateAnswerReject, checkDiaryAnswerValid, updateAnswerReadStatus,
-    selectPreviousDiary, selectNextDiary
+    selectPreviousDiary, selectNextDiary, getDiaryUserToken
 };
