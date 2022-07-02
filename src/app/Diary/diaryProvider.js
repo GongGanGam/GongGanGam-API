@@ -169,6 +169,15 @@ exports.getDiaryUser = async function (diaryIdx) {
     return userToken;
 };
 
+exports.getTokenByUserIdx = async function (userIdx) {
+    const connection = await pool.getConnection(async (conn) => conn);
+    const userToken = await diaryDao.getTokenByUserIdx(connection, userIdx);
+
+    connection.release();
+
+    return userToken;
+};
+
 exports.checkUser = async function (userIdx) {
     const connection = await pool.getConnection(async (conn) => conn);
     const user = await diaryDao.checkUserExists(connection, userIdx);

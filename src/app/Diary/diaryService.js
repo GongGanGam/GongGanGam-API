@@ -29,8 +29,9 @@ exports.createDiary = async function (userIdx, date, emoji, content, shareAgree)
             const diaryResult = await diaryDao.insertDiary(connection, insertDiaryParams);
             const insertDiaryIdx = diaryResult[0].insertId;
             console.log('insert:' + insertDiaryIdx);
+            let returnUserIdx = 0;
 
-            if (shareAgree === 'T') {
+            if (shareAgree=== 'T') {
 
                 // 랜덤의 유저 가져오기
                 const randUser = await diaryDao.selectRandUser(connection, userIdx);
@@ -39,10 +40,12 @@ exports.createDiary = async function (userIdx, date, emoji, content, shareAgree)
 
                 const shareParams = [insertDiaryIdx, randUserIdx];
                 const shareResult = await diaryDao.insertShare(connection, shareParams);
+                returnUserIdx = randUserIdx;
             }
 
             await connection.commit();
-            return response(baseResponse.SUCCESS);
+            return returnUserIdx;
+            //return response(baseResponse.SUCCESS);
         } catch (err) {
             console.log(err);
             await connection.rollback();
@@ -73,6 +76,7 @@ exports.createDiaryImg = async function (userIdx, date, emoji, content, shareAgr
             const diaryResult = await diaryDao.insertDiaryImg(connection, insertDiaryParams);
             const insertDiaryIdx = diaryResult[0].insertId;
             console.log('insert:' + insertDiaryIdx);
+            let returnUserIdx = 0;
 
             if (shareAgree === 'T') {
 
@@ -83,10 +87,12 @@ exports.createDiaryImg = async function (userIdx, date, emoji, content, shareAgr
 
                 const shareParams = [insertDiaryIdx, randUserIdx];
                 const shareResult = await diaryDao.insertShare(connection, shareParams);
+                returnUserIdx = randUserIdx;
             }
 
             await connection.commit();
-            return response(baseResponse.SUCCESS);
+            return returnUserIdx;
+            //return response(baseResponse.SUCCESS);
         } catch (err) {
             console.log(err);
             await connection.rollback();

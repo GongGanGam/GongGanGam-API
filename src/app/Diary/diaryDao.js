@@ -201,6 +201,17 @@ async function getDiaryUserToken(connection, diaryIdx) {
     return diaryInfo;
 }
 
+// userIdx로 유저의 토큰값 가져오기
+async function getTokenByUserIdx(connection, userIdx) {
+    const selectUserTokenQuery = `
+        select deviceToken
+        from User
+        where userIdx=?;
+                `;
+    const [diaryInfo] = await connection.query(selectUserTokenQuery, userIdx);
+    return diaryInfo;
+}
+
 // 다이어리 생성
 async function insertDiary(connection, insertDiaryParams) {
     const insertDiaryQuery = `
@@ -372,5 +383,5 @@ module.exports = {
     insertShare, insertDiaryImg, selectAllShareList, selectAllAnswer, updateDiaryReadStatus,
     checkDiaryShareUser, checkShareAgree, checkAnswerExists, selectDiaryByAnswerIdx,
     selectAnswerByIdx, updateAnswerReject, checkDiaryAnswerValid, updateAnswerReadStatus,
-    selectPreviousDiary, selectNextDiary, getDiaryUserToken
+    selectPreviousDiary, selectNextDiary, getDiaryUserToken, getTokenByUserIdx
 };
