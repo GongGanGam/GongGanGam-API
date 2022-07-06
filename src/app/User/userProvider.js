@@ -63,7 +63,6 @@ exports.checkUserExistByIden = async function (identification) {
   const userCheckResult = await userDao.selectUserCheckIden(connection, identification);
   connection.release();
 
-
   return userCheckResult;
 };
 
