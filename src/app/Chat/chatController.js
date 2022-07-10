@@ -3,6 +3,8 @@ const chatProvider = require("../../app/Chat/chatProvider");
 const chatService = require("../../app/Chat/chatService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
+const fcmAccount = require("../../../gonggangam-f2086-firebase-adminsdk-hw07b-66d59423da.json");
+const admin = require('firebase-admin');
 
 /**
  * API No. 27
@@ -30,6 +32,11 @@ exports.postChatUsers = async function (req, res) {
 
 
     const postChatResponse = await chatService.createChatUser(userIdx, chatUserIdx);
+
+    admin.initializeApp({
+        credential: admin.credential.cert(fcmAccount),
+        databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
+    });
 
     // chatUserIdx에 채팅 시작했다는 알림 추가.
     const chatUserToken = await chatProvider.getChatUserToken(chatUserIdx);
