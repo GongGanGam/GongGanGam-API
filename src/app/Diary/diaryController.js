@@ -9,7 +9,7 @@ const formidable = require('formidable')
 const fs = require('fs');
 
 const admin = require('firebase-admin');
-const fcmAccount = require("../../../config/test-a9c79-firebase-adminsdk-t1wyq-b50493c592.json");
+const fcmAccount = require("../../../gonggangam-f2086-firebase-adminsdk-hw07b-66d59423da.json");
 // const admin = require("firebase-admin");
 //
 // let serviceAccount = require("../../../config/firebase_admin.json");
@@ -251,6 +251,11 @@ exports.postDiary = async function (req, res) {
     }
     console.log(date);
 
+    admin.initializeApp({
+        credential: admin.credential.cert(fcmAccount),
+        databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
+    });
+
     // 파일 없으면 파일 없이 그냥 업로드
     if (!req.files) {
         console.log('no file');
@@ -265,10 +270,10 @@ exports.postDiary = async function (req, res) {
             let deviceToken = getDiaryUser[0].deviceToken;
             console.log(deviceToken);
 
-            admin.initializeApp({
-                credential: admin.credential.cert(fcmAccount),
-
-            });
+            // admin.initializeApp({
+            //     credential: admin.credential.cert(fcmAccount),
+            //     databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
+            // });
 
             let message = {
                 notification: {
@@ -283,13 +288,13 @@ exports.postDiary = async function (req, res) {
                 .send(message)
                 .then(function(fcmres){
                     console.log('Successfully sent message:', fcmres)
-                    //return res.send(response(baseResponse.SUCCESS));
+                    return res.send(response(baseResponse.SUCCESS));
                 })
                 .catch(function(err) {
                     console.log('Error Sending message!!! : ', err)
                     return res.send(errResponse(baseResponse.USER_PUSH_ERROR));
                 });
-            return res.send(response(baseResponse.SUCCESS));
+            //return res.send(response(baseResponse.SUCCESS));
         }
         else if (postdiaryResponse===0) {
             return res.send(response(baseResponse.SUCCESS));
@@ -297,7 +302,6 @@ exports.postDiary = async function (req, res) {
         else {
             return res.send(postdiaryResponse);
         }
-
         //return res.send(postdiaryResponse);
     }
     // 파일 잇는 경우
@@ -334,11 +338,11 @@ exports.postDiary = async function (req, res) {
                     const getDiaryUser = await diaryProvider.getTokenByUserIdx(userIdx);
                     console.log(getDiaryUser[0].deviceToken)
                     let deviceToken = getDiaryUser[0].deviceToken;
+                    //let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
+
                     console.log(deviceToken);
 
-                    admin.initializeApp({
-                        credential: admin.credential.cert(fcmAccount),
-                    });
+
 
                     let message = {
                         notification: {
@@ -353,13 +357,13 @@ exports.postDiary = async function (req, res) {
                         .send(message)
                         .then(function(fcmres){
                             console.log('Successfully sent message:', fcmres)
-                            //return res.send(response(baseResponse.SUCCESS));
+                            return res.send(response(baseResponse.SUCCESS));
                         })
                         .catch(function(err) {
                             console.log('Error Sending message!!! : ', err)
                             return res.send(errResponse(baseResponse.USER_PUSH_ERROR));
                         });
-                    return res.send(response(baseResponse.SUCCESS));
+                    //return res.send(response(baseResponse.SUCCESS));
                 }
                 else if (diaryResponse===0) {
                     return res.send(response(baseResponse.SUCCESS));
