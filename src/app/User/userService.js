@@ -145,12 +145,13 @@ exports.createUser = async function (nickname, birthYear, gender, type, email, i
             await connection.beginTransaction();
             const userNicknameResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
             console.log(`추가된 회원 : ${userNicknameResult[0].insertId}`)
-            const userPushResult = await userDao.insertPush(connection, userNicknameResult[0].insertId);
+            const newUserIdx = userNicknameResult[0].insertId;
+            const userPushResult = await userDao.insertPush(connection, newUserIdx);
 
             //토큰 생성 Service
             let token = await jwt.sign(
                 {
-                    userIdx: userNicknameResult[0].insertId,
+                    userIdx: newUserIdx,
                 }, // 토큰의 내용(payload)
                 secret_config.jwtsecret, // 비밀키
                 {
@@ -160,7 +161,9 @@ exports.createUser = async function (nickname, birthYear, gender, type, email, i
             );
 
             await connection.commit();
-            return {'userIdx': userNicknameResult[0].insertId, 'jwt': token};
+            const createUserResult = {'userIdx': userNicknameResult[0].insertId, 'jwt': token}
+            console.log(createUserResult)
+            return createUserResult;
         }
         catch (err) {
             await connection.rollback();
@@ -178,7 +181,7 @@ exports.createUser = async function (nickname, birthYear, gender, type, email, i
 };
 
 //04(2). 추가 정보 입력
-exports.updateUserInfo = async function ( nickname, birthYear, gender, userIdx) {
+exports.updateUserInfo = async function (nickname, birthYear, gender, userIdx) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
 
@@ -186,14 +189,16 @@ exports.updateUserInfo = async function ( nickname, birthYear, gender, userIdx) 
         const userNicknameRows = await userProvider.checkUserExistByIdx(userIdx);
 
         //회원 존재 확인
-        if (userNicknameRows.length < 1)
-            return errResponse(baseResponse.SIGNIN_ERROR);
+        // if (userNicknameRows.length < 1)
+        //     return errResponse(baseResponse.SIGNIN_ERROR);
+
         // 수정할 이름이 중복됐는지 확인.
         const userNicknameCheck = await userProvider.checkUserName(nickname, userIdx);
         console.log(userNicknameCheck)
         if (userNicknameCheck.length>0) return errResponse(baseResponse.SIGNUP_REDUNDANT_NICKNAME);
 
-        const editUserResult = await userDao.updateUserSigninInfo(connection, nickname, birthYear, gender, userIdx)
+        const editUserResult = await userDao.updateUserSigninInfo(connection, nickname, birthYear, gender, userIdx);
+        console.log('editUserResult' + editUserResult);
         connection.release();
         return response(baseResponse.SUCCESS);
 

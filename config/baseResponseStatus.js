@@ -77,7 +77,7 @@ module.exports = {
     LOGIN_NAVER_TOKEN_ERROR : { "isSuccess": false, "code": 5026, "message": "네이버 토큰번호에 문제가 있습니다."},
     LOGIN_NAVER_ERROR : { "isSuccess": false, "code": 5027, "message": "네이버 로그인에 실패하였습니다."},
     // 5028 로그인 실패 회원가입해주세요
-    SIGNIN_ERROR : { "isSuccess": false, "code": 5029, "message": "회원가입이 잘못되었습니다. 다시 시도해주세요."},
+    SIGNIN_ERROR : { "isSuccess": false, "code": 5029, "message": "중복된 닉네임입니다."},
     CHAT_USER_INVALID : { "isSuccess": false, "code": 5030, "message": "이미 추가된 유저입니다."},
     REPORT_TYPE_INVALID: { "isSuccess": false, "code": 5031, "message": "신고 타입이 잘못되었습니다.(채팅/다이어리/답장)"},
     REPORT_DETAIL_INVALID: { "isSuccess": false, "code": 5032, "message": "신고한 종류가 잘못되었습니다."},

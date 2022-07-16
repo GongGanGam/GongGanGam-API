@@ -36,83 +36,56 @@ exports.loginKakao = async function (req, res) {
     console.log('token ' + token);
 
     var api_url = 'https://kapi.kakao.com/v2/user/me';
-    // var request2 = require('request');
-    //console.log(body);
 
-    // var options = {
-    //     url: api_url,
-    //     headers: {'Authorization': header},
-    // };
-
-    axios({
+    const axiosResult = await axios({
         url: api_url,
         method: 'get',
         headers: {'Authorization': header}
-
     })
-        .then (function(resp) {
-            console.log('success me');
-            const myInfo = JSON.parse(resp);
-            console.log(myInfo)
-            const email = myInfo.kakao_account.email;
-            const identification = myInfo.id;
-            console.log(email);
-            console.log('id: ' + identification)
 
-            if (!deviceToken) return res.send(response(baseResponse.LOGIN_DEVICETOKEN_EMPTY));
+    if (axiosResult.statusCode === 200) {
+        const userData = axiosResult.kakao_account;
+        console.log(userData);
+        const email = userData.email;
+        const identification = userData.id;
 
-            // DB에 유저 있는지 확인 후, 없으면 로그인 처리
-            const userExist = checkUserExistByEmail(email, identification);
-            console.log(userExist)
-            if (userExist.length > 0) {
-                const signInResponse = postKaKaoLogin(identification);
+        console.log('id: ' + identification + ' email ' + email)
 
-                const userIdx = signInResponse.result.userIdx;
-                console.log(userIdx);
-
-                // 기기 토큰값 입력 (수정하기)
-                const patchDeviceToken = patchDeviceToken(userIdx, deviceToken);
-                if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
-                return res.send(signInResponse);
-            }
-
-            else {
-                const signinResponse = createUserKakao("nickname", 2000, "N", "kakao", email, identification);
-
-                return res.json({
-                    isSuccess: false,
-                    code: 5028,
-                    message: "로그인 실패. 회원가입해주세요",
-                    result: signinResponse
-                });
-
-            }
-        })
-        .catch (function (error){
-            console.log('error');
-            if (response != null) {
-                //res.status(response.statusCode).end();
-                console.log('me error = ' + error);
-                return res.send(errResponse(baseResponse.LOGIN_KAKAO_TOKEN_ERROR));
-            }
-            return res.send(errResponse(baseResponse.LOGIN_KAKAO_ERROR));
-        })
-
-    async function checkUserExistByEmail(email, identification) {
+        // DB에 유저 있는지 확인 후, 없으면 로그인 처리
         const userExist = await userProvider.checkUserExist(email, identification);
-        return userExist;
+        console.log(userExist)
+        if (userExist.length > 0) {
+            const signInResponse = await userService.postKaKaoLogin(identification);
+
+            const userIdx = signInResponse.result.userIdx;
+            console.log(userIdx);
+
+            // 기기 토큰값 입력 (수정하기)
+            const patchDeviceToken = await userService.patchDeviceToken(userIdx, deviceToken);
+            if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
+            return res.send(signInResponse);
+        }
+
+        else {
+            const signinResponse = await userService.createUser("nickname", 2000, "N", "kakao", email, identification);
+
+            return res.json({
+                isSuccess: false,
+                code: 5028,
+                message: "로그인 실패. 회원가입해주세요",
+                result: signinResponse
+            });
+
+        }
     }
-    async function postKaKaoLogin(identification) {
-        const signInResponse = await userService.postKaKaoLogin(identification);
-        return signInResponse;
-    }
-    async function patchDeviceToken(userIdx, deviceToken) {
-        const patchDeviceToken = await userService.patchDeviceToken(userIdx, deviceToken);
-        return patchDeviceToken;
-    }
-    async function createUserKakao (nickname, birthYear, gender, type, email, identification) {
-        const signinResponse = await userService.createUser(nickname, birthYear, gender, type, email, identification);
-        return signinResponse;
+    else{
+        console.log('error');
+        if (response != null) {
+            //res.status(response.statusCode).end();
+            console.log('me error = ' + error);
+            return res.send(errResponse(baseResponse.LOGIN_KAKAO_TOKEN_ERROR));
+        }
+        return res.send(errResponse(baseResponse.LOGIN_KAKAO_ERROR));
     }
 
 }
@@ -128,11 +101,15 @@ exports.loginNaver = async function (req, res) {
 
     const {token, deviceToken} = req.body;
 
+
+
     var header = "bearer " + token; // Bearer 다음에 공백 추가
     console.log('token ' + token);
 
     var api_url = 'https://openapi.naver.com/v1/nid/me';
     //var request2 = require('request');
+
+    if (!deviceToken) return res.send(response(baseResponse.LOGIN_DEVICETOKEN_EMPTY));
 
     const axiosResult = await axios({
         url: api_url,
@@ -190,102 +167,6 @@ exports.loginNaver = async function (req, res) {
         }
 
     }
-        // const profile = axiosResult.data.response;
-        // console.log(profile)
-        //
-        // const signinResponse = await createUserNaver("nickname", 2000, "N", "naver", 'email', 'identification');
-        // console.log(signinResponse)
-
-        // .then (function(meresp) {
-        //     console.log('success me');
-        //     console.log('response' + meresp)
-        //
-        //     if (meresp['status'] == 200) {
-        //         console.log('status 200')
-        //         console.log(meresp['data'])
-        //         const userData = meresp['data']
-        //
-        //         const email = userData.response.email;
-        //         const identification = userData.response.id;
-        //         console.log('email ' + email)
-        //         console.log('id ' + identification)
-        //
-        //         // DB에 유저 있는지 확인 후, 있으면 로그인 처리
-        //         const userByIden = await checkUserExistByIdent(identification);
-        //         console.log(userByIden)
-        //         if (userByIden.length>0) {
-        //             const signInResponse = postNaverLogin(identification);
-        //
-        //             const userIdx = signInResponse.result.userIdx;
-        //             console.log(userIdx);
-        //
-        //             // 기기 토큰값 입력 (수정하기)
-        //             const patchDeviceToken = patchDeviceToken(userIdx, deviceToken);
-        //             if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
-        //
-        //             return res.send(signInResponse);
-        //         }
-        //
-        //         // 회원가입처리.
-        //         else {
-        //             const signinResponse = await createUserNaver("nickname", 2000, "N", "naver", email, identification);
-        //
-        //             //const signinResponse = userService.createUser("nickname", 2000, "N", "naver", email, identification);
-        //             console.log('signinres ='+ signinResponse)
-        //
-        //             return res.json({
-        //                 isSuccess: false,
-        //                 code     : 5028,
-        //                 message  : "로그인 실패. 회원가입해주세요",
-        //                 result   : signinResponse
-        //             });
-        //         }
-        //     }
-        //     else {
-        //         console.log('error');
-        //         if(response != null) {
-        //             console.log('status not 200')
-        //             console.log(meresp['status'])
-        //             console.log(JSON.stringify(meresp['error']))
-        //             return res.send(baseResponse.LOGIN_NAVER_TOKEN_ERROR);
-        //         }
-        //         return res.send(baseResponse.LOGIN_NAVER_ERROR);
-        //     }
-        //
-        // })
-        // .catch(function (error){
-        //     console.log('error');
-        //     if(response != null) {
-        //         //res.status(response.statusCode).end();
-        //         console.log('me error = ' + error);
-        //         console.log(error.code);
-        //         console.log(error.msg);
-        //         return res.send(baseResponse.LOGIN_NAVER_TOKEN_ERROR);
-        //     }
-        //     return res.send(baseResponse.LOGIN_NAVER_ERROR);
-        // });
-
-        async function checkUserExistByIdent(identification) {
-            const userByIden = await userProvider.checkUserExistByIden(identification);
-            return userByIden;
-        }
-
-        async function postNaverLogin(identification) {
-            const signInResponse = await userService.postNaverLogin(identification);
-            return signInResponse;
-        }
-
-        async function patchDeviceToken(userIdx, deviceToken) {
-            const patchDeviceToken = await userService.patchDeviceToken(userIdx, deviceToken);
-            return patchDeviceToken;
-        }
-
-        async function createUserNaver(nickname, birthYear, gender, type, email, identification) {
-            const signinResponse = await userService.createUser(nickname, birthYear, gender, type, email, identification);
-            console.log(signinResponse)
-
-            return signinResponse;
-        }
 
 }
 
@@ -316,7 +197,7 @@ exports.loginNaver = async function (req, res) {
 
         const userIdFromJWT = req.verifiedToken.userIdx;
         const {nickname, birthYear, gender} = req.body;
-        console.log(userIdFromJWT)
+        console.log('Signin Update'+userIdFromJWT)
 
         // 빈 값 체크
         if (!nickname) return res.send(response(baseResponse.SIGNIN_USER_NICKNAME_EMPTY));
@@ -354,7 +235,7 @@ exports.loginNaver = async function (req, res) {
         const today = new Date();
         console.log(userIdx)
         console.log(userIdFromJWT)
-        if (userIdFromJWT != userIdx) return res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
+        if (userIdFromJWT !== userIdx) return res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
 
         // 빈 값 체크
         if (!nickname) return res.send(errResponse(baseResponse.USER_NICKNAME_EMPTY));
