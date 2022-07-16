@@ -262,12 +262,12 @@ exports.postDiary = async function (req, res) {
         const postdiaryResponse = await diaryService.createDiary(userIdx, date, emoji, content, shareAgree);
         console.log(postdiaryResponse)
         // 유저에게 푸시 알림 보내기 (FCM)
-        // 보낼 유저의 deviceToken 가져오기
-        // createDiary에서 random 유저 가져오는데 이거 어떻게 가져오징..
+        // 보낼 유저의 deviceToken 가져오
         if (postdiaryResponse>0) {
             const getDiaryUser = await diaryProvider.getTokenByUserIdx(userIdx);
             console.log(getDiaryUser[0].deviceToken)
-            let deviceToken = getDiaryUser[0].deviceToken;
+            //let deviceToken = getDiaryUser[0].deviceToken;
+            let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
             console.log(deviceToken);
 
             // admin.initializeApp({
@@ -288,7 +288,7 @@ exports.postDiary = async function (req, res) {
                 .send(message)
                 .then(function(fcmres){
                     console.log('Successfully sent message:', fcmres)
-                    return res.send(response(baseResponse.SUCCESS));
+                    return res.send(postdiaryResponse);
                 })
                 .catch(function(err) {
                     console.log('Error Sending message!!! : ', err)
