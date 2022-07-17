@@ -8,10 +8,16 @@ const regexEmail = require("regex-email");
 const s3Client = require("../../../config/s3");
 const naver = require("../../../config/naver");
 const kakao = require("../../../config/kakao");
-const fcmAccount = require("../../../gonggangam-f2086-firebase-adminsdk-hw07b-66d59423da.json");
+//const fcmAccount = require("../../../gonggangam-f2086-firebase-adminsdk-hw07b-48074bd51f");
+const fcmAccount = require("../../../config/test-a9c79-firebase-adminsdk-t1wyq-b50493c592.json");
 const admin = require('firebase-admin');
 const AWS = require('aws-sdk');
 const axios = require('axios');
+admin.initializeApp({
+    credential: admin.credential.cert(fcmAccount),
+    databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
+
+});
 
 /**
  * API No. 0
@@ -100,8 +106,6 @@ exports.loginKakao = async function (req, res) {
 exports.loginNaver = async function (req, res) {
 
     const {token, deviceToken} = req.body;
-
-
 
     var header = "bearer " + token; // Bearer 다음에 공백 추가
     console.log('token ' + token);
@@ -439,10 +443,7 @@ exports.loginNaver = async function (req, res) {
      */
     exports.getPush = async function (req, res) {
         let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
-        admin.initializeApp({
-            credential: admin.credential.cert(fcmAccount),
 
-        });
 
         let message = {
             notification: {

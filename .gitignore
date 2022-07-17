@@ -10,10 +10,8 @@ config/firebase.js
 config/firebase_admin.json
 config/naver.js
 config/kakao.js
-config/gonggangam-5ae27-firebase-adminsdk-ydjub-7738c07e0b.json
 config/test-a9c79-firebase-adminsdk-t1wyq-b50493c592.json
-config/fcm.
-config/gonggangam-f2086-firebase-adminsdk-hw07b-3ef2e5c277.json
-config/gonggangam-f2086-firebase-adminsdk-hw07b-8c3a0c0873.json
+config/fcm.js
+gonggangam-f2086-firebase-adminsdk-hw07b-48074bd51f.json
+gonggangam-f2086-firebase-adminsdk-hw07b-8a893cb50f.json
 gonggangam-f2086-firebase-adminsdk-hw07b-66d59423da.json
-gonggangam-f2086-firebase-adminsdk-hw07b-2da8c5720d.json

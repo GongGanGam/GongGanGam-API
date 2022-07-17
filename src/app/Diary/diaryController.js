@@ -7,9 +7,9 @@ const s3Client = require("../../../config/s3");
 const AWS = require('aws-sdk');
 const formidable = require('formidable')
 const fs = require('fs');
-
+const fcmAccount = require("../../../config/test-a9c79-firebase-adminsdk-t1wyq-b50493c592.json");
 const admin = require('firebase-admin');
-const fcmAccount = require("../../../gonggangam-f2086-firebase-adminsdk-hw07b-66d59423da.json");
+//const fcmAccount = require("../../../gonggangam-f2086-firebase-adminsdk-hw07b-66d59423da.json");
 // const admin = require("firebase-admin");
 //
 // let serviceAccount = require("../../../config/firebase_admin.json");
@@ -491,7 +491,7 @@ exports.patchDiary = async function (req, res) {
     const patchdiaryResponse = await diaryService.updateDiary(diaryIdx, userIdx, date, emoji, content, shareAgree);
 
     // shareAgree T면 랜덤 유저의 deviceToken 가져오기.
-    let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
+    //let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
     admin.initializeApp({
         credential: admin.credential.cert(fcmAccount),
 
@@ -505,17 +505,17 @@ exports.patchDiary = async function (req, res) {
         token: deviceToken,
     }
 
-    admin
-        .messaging()
-        .send(message)
-        .then(function(fcmres){
-            console.log('Successfully sent message:', fcmres)
-            //return res.send(response(baseResponse.SUCCESS));
-        })
-        .catch(function(err) {
-            console.log('Error Sending message!!! : ', err)
-            return res.send(errResponse(baseResponse.USER_PUSH_ERROR));
-        });
+    // admin
+    //     .messaging()
+    //     .send(message)
+    //     .then(function(fcmres){
+    //         console.log('Successfully sent message:', fcmres)
+    //         //return res.send(response(baseResponse.SUCCESS));
+    //     })
+    //     .catch(function(err) {
+    //         console.log('Error Sending message!!! : ', err)
+    //         return res.send(errResponse(baseResponse.USER_PUSH_ERROR));
+    //     });
     return res.send(patchdiaryResponse);
 
 };

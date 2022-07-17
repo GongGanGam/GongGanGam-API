@@ -3,7 +3,8 @@ const chatProvider = require("../../app/Chat/chatProvider");
 const chatService = require("../../app/Chat/chatService");
 const baseResponse = require("../../../config/baseResponseStatus");
 const {response, errResponse} = require("../../../config/response");
-const fcmAccount = require("../../../gonggangam-f2086-firebase-adminsdk-hw07b-2da8c5720d.json");
+//const fcmAccount = require("../../../gonggangam-f2086-firebase-adminsdk-hw07b-8a893cb50f.json");
+const fcmAccount = require("../../../config/test-a9c79-firebase-adminsdk-t1wyq-b50493c592.json");
 const admin = require('firebase-admin');
 
 /**
@@ -40,21 +41,16 @@ exports.postChatUsers = async function (req, res) {
 
     // chatUserIdx에 채팅 시작했다는 알림 추가.
     const chatUserToken = await chatProvider.getChatUserToken(chatUserIdx);
-    // let deviceToken = chatUserToken[0].deviceToken;
-    // admin.initializeApp({
-    //     credential: admin.credential.cert(fcmAccount),
-    //
-    // });
-    //let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
-    let deviceToken = "fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR"
-    console.log(deviceToken);
+
+    //let deviceToken = "fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR"
+    console.log(chatUserToken);
 
     let message = {
         notification: {
             title: '',
             body: '채팅이 시작되었어요!',
         },
-        token: deviceToken,
+        token: chatUserToken,
 
     }
 
