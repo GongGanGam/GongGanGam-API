@@ -13,11 +13,10 @@ const fcmAccount = require("../../../config/test-a9c79-firebase-adminsdk-t1wyq-b
 const admin = require('firebase-admin');
 const AWS = require('aws-sdk');
 const axios = require('axios');
-admin.initializeApp({
-    credential: admin.credential.cert(fcmAccount),
-    databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
-
-});
+// admin.initializeApp({
+//     credential: admin.credential.cert(fcmAccount),
+//     databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
+// });
 
 /**
  * API No. 0
@@ -443,7 +442,12 @@ exports.loginNaver = async function (req, res) {
      */
     exports.getPush = async function (req, res) {
         let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
-
+        if (!admin.apps.length) {
+            admin.initializeApp({
+                credential: admin.credential.cert(fcmAccount),
+                databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
+            });
+        }
 
         let message = {
             notification: {

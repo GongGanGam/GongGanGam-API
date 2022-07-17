@@ -10,9 +10,7 @@ const fs = require('fs');
 const fcmAccount = require("../../../config/test-a9c79-firebase-adminsdk-t1wyq-b50493c592.json");
 const admin = require('firebase-admin');
 //const fcmAccount = require("../../../gonggangam-f2086-firebase-adminsdk-hw07b-66d59423da.json");
-// const admin = require("firebase-admin");
-//
-// let serviceAccount = require("../../../config/firebase_admin.json");
+
 
 /**
  * API No. 12
@@ -20,6 +18,7 @@ const admin = require('firebase-admin');
  * [GET] /app/diarys/share?page=
  */
 exports.getSharedDiarys = async function (req, res) {
+
 
     //const userIdx = 1;
     const userIdx = req.verifiedToken.userIdx;
@@ -251,16 +250,18 @@ exports.postDiary = async function (req, res) {
     }
     console.log(date);
 
-    admin.initializeApp({
-        credential: admin.credential.cert(fcmAccount),
-        databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
-    });
+    if (!admin.apps.length) {
+        admin.initializeApp({
+            credential: admin.credential.cert(fcmAccount),
+            databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
+        });
+    }
 
     // 파일 없으면 파일 없이 그냥 업로드
-    if (!req.files) {
+    if (!file) {
         console.log('no file');
         const postdiaryResponse = await diaryService.createDiary(userIdx, date, emoji, content, shareAgree);
-        console.log(postdiaryResponse)
+        console.log('postdiaryResponse' + postdiaryResponse)
         // 유저에게 푸시 알림 보내기 (FCM)
         // 보낼 유저의 deviceToken 가져오
         if (postdiaryResponse>0) {
@@ -288,11 +289,12 @@ exports.postDiary = async function (req, res) {
                 .send(message)
                 .then(function(fcmres){
                     console.log('Successfully sent message:', fcmres)
-                    return res.send(postdiaryResponse);
+                    return res.send(response(baseResponse.SUCCESS));
                 })
                 .catch(function(err) {
                     console.log('Error Sending message!!! : ', err)
                     return res.send(errResponse(baseResponse.USER_PUSH_ERROR));
+
                 });
             //return res.send(response(baseResponse.SUCCESS));
         }
@@ -306,7 +308,7 @@ exports.postDiary = async function (req, res) {
     }
     // 파일 잇는 경우
     else {
-        const img = req.files.uploadImg;
+        const img = req.files.files;
         console.log(img)
         let bucketName = 'gonggangam-bucket'
 
@@ -401,10 +403,13 @@ exports.postAnswer = async function (req, res) {
     const getDiaryUser = await diaryProvider.getDiaryUser(diaryIdx);
     console.log(getDiaryUser[0].deviceToken)
     let deviceToken = getDiaryUser[0].deviceToken;
-    admin.initializeApp({
-        credential: admin.credential.cert(fcmAccount),
 
-    });
+    if (!admin.apps.length) {
+        admin.initializeApp({
+            credential: admin.credential.cert(fcmAccount),
+            databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
+        });
+    }
 
     let message = {
         notification: {

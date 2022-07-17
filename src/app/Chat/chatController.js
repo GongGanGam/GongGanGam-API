@@ -6,6 +6,10 @@ const {response, errResponse} = require("../../../config/response");
 //const fcmAccount = require("../../../gonggangam-f2086-firebase-adminsdk-hw07b-8a893cb50f.json");
 const fcmAccount = require("../../../config/test-a9c79-firebase-adminsdk-t1wyq-b50493c592.json");
 const admin = require('firebase-admin');
+// admin.initializeApp({
+//     credential: admin.credential.cert(fcmAccount),
+//     databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
+// });
 
 /**
  * API No. 27
@@ -34,10 +38,16 @@ exports.postChatUsers = async function (req, res) {
 
     const postChatResponse = await chatService.createChatUser(userIdx, chatUserIdx);
 
-    admin.initializeApp({
-        credential: admin.credential.cert(fcmAccount),
-        databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
-    });
+    // admin.initializeApp({
+    //     credential: admin.credential.cert(fcmAccount),
+    //     databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
+    // });
+    if (!admin.apps.length) {
+        admin.initializeApp({
+            credential: admin.credential.cert(fcmAccount),
+            databaseURL: "https://gonggangam-f2086-default-rtdb.firebaseio.com"
+        });
+    }
 
     // chatUserIdx에 채팅 시작했다는 알림 추가.
     const chatUserToken = await chatProvider.getChatUserToken(chatUserIdx);
