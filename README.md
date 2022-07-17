@@ -46,6 +46,7 @@
   "license": "ISC",
   "dependencies": {
     "aws-sdk": "^2.1064.0",
+    "axios": "^0.27.2",
     "compression": "^1.7.4",
     "cors": "^2.8.5",
     "crypto": "^1.0.1",
@@ -53,7 +54,7 @@
     "express": "^4.17.1",
     "express-fileupload": "^1.2.1",
     "firebase": "^9.6.6",
-    "firebase-admin": "^10.0.2",
+    "firebase-admin": "^10.2.0",
     "formidable": "^2.0.1",
     "jsonwebtoken": "^8.5.1",
     "method-override": "^3.0.0",
@@ -68,6 +69,7 @@
     "winston-daily-rotate-file": "^4.2.1"
   }
 }
+
 ```
 
 # Foldering
