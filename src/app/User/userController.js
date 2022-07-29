@@ -59,47 +59,51 @@ exports.loginKakao = async function (req, res) {
         return res.send(errResponse(baseResponse.LOGIN_KAKAO_TOKEN_ERROR));
     }
 
-    if (axiosResult.statusCode === 200) {
-            const userData = axiosResult.kakao_account;
-            console.log(userData);
-            const email = userData.email;
-            const identification = userData.id;
+    if (axiosResult.status === 200) {
+        console.log('statuscode 200')
+        const userData = axiosResult.data.kakao_account;
+        console.log(userData);
+        const email = userData.email;
+        const identification = axiosResult.id;
 
-            console.log('id: ' + identification + ' email ' + email)
+        console.log('id: ' + identification + ' email ' + email)
 
-            // DB에 유저 있는지 확인 후, 없으면 로그인 처리
-            const userExist = await userProvider.checkUserExist(email, identification);
-            console.log(userExist)
-            if (userExist.length > 0) {
-                const signInResponse = await userService.postKaKaoLogin(identification);
+        // DB에 유저 있는지 확인 후, 없으면 로그인 처리
+        const userExist = await userProvider.checkUserExist(email, identification);
+        console.log(userExist)
+        if (userExist.length > 0) {
+            const signInResponse = await userService.postKaKaoLogin(identification);
 
-                const userIdx = signInResponse.result.userIdx;
-                console.log(userIdx);
+            const userIdx = signInResponse.result.userIdx;
+            console.log(userIdx);
 
-                // 기기 토큰값 입력 (수정하기)
-                const patchDeviceToken = await userService.patchDeviceToken(userIdx, deviceToken);
-                if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
-                return res.send(signInResponse);
-            }
+            // 기기 토큰값 입력 (수정하기)
+            const patchDeviceToken = await userService.patchDeviceToken(userIdx, deviceToken);
+            if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
+            return res.send(signInResponse);
+        }
 
-            else {
-                const signinResponse = await userService.createUser("nickname", 2000, "N", "kakao", email, identification);
+        else {
+            const signinResponse = await userService.createUser("nickname", 2000, "N", "kakao", email, identification, deviceToken);
 
-                return res.json({
-                    isSuccess: false,
-                    code: 5028,
-                    message: "로그인 실패. 회원가입해주세요",
-                    result: signinResponse
-                });
+            const userIdx = signinResponse.userIdx;
+            const patchDeviceToken = await userService.patchDeviceToken(userIdx, deviceToken);
+            if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
 
-            }
+            return res.json({
+                isSuccess: false,
+                code: 5028,
+                message: "로그인 실패. 회원가입해주세요",
+                result: signinResponse
+            });
+
+        }
     }
     else{
         console.log('statusCode is not 200??');
-        console.log('axios result: ' + axiosResult);
-        const err = axiosResult.response;
-        console.log('error' + err);
+        console.log('axios errorcode: ' + axiosResult.status);
 
+        console.log(statusText);
         return res.send(errResponse(baseResponse.LOGIN_KAKAO_ERROR));
     }
 
@@ -121,6 +125,7 @@ exports.loginNaver = async function (req, res) {
 
     var header = "bearer " + token; // Bearer 다음에 공백 추가
     console.log('token ' + token);
+    console.log('devicetoken ' + deviceToken)
 
     var api_url = 'https://openapi.naver.com/v1/nid/me';
 
@@ -176,9 +181,9 @@ exports.loginNaver = async function (req, res) {
         }
     } else {
         console.log('statusCode is not 200??');
-        console.log('axios result: ' + axiosResult);
+        console.log('axios result: ' + JSON.stringify(axiosResult));
         const err = axiosResult.response;
-        console.log('error' + err);
+        console.log('error' + JSON.stringify(err));
 
         return res.send(baseResponse.LOGIN_KAKAO_ERROR);
     }
