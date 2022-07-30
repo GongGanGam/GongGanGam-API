@@ -53,61 +53,63 @@ exports.loginKakao = async function (req, res) {
             method: 'get',
             headers: {'Authorization': header}
         });
+
+        if (axiosResult.status === 200) {
+            console.log('statuscode 200')
+            const userData = axiosResult.data.kakao_account;
+
+            console.log(userData);
+            const email = userData.email;
+            const identification = axiosResult.data.id;
+
+            console.log('id: ' + identification + ' email ' + email)
+
+            // DB에 유저 있는지 확인 후, 없으면 로그인 처리
+            const userExist = await userProvider.checkUserExist(email, identification);
+            console.log(userExist)
+            if (userExist.length > 0) {
+                const signInResponse = await userService.postKaKaoLogin(identification);
+
+                const userIdx = signInResponse.result.userIdx;
+                console.log(userIdx);
+
+                // 기기 토큰값 입력 (수정하기)
+                const patchDeviceToken = await userService.patchDeviceToken(userIdx, deviceToken);
+                if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
+                return res.send(signInResponse);
+            }
+
+            else {
+                const signinResponse = await userService.createUser("nickname", 2000, "N", "kakao", email, identification);
+
+                const userIdxFromSignin = signinResponse.userIdx;
+                console.log('userIDx from createUser: ' + userIdxFromSignin)
+                const patchDeviceToken = await userService.patchDeviceToken(userIdxFromSignin, deviceToken);
+                if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
+
+                return res.json({
+                    isSuccess: false,
+                    code: 5028,
+                    message: "로그인 실패. 회원가입해주세요",
+                    result: signinResponse
+                });
+
+            }
+        }
+        else{
+            console.log('statusCode is not 200??');
+            console.log('axios errorcode: ' + axiosResult.status);
+
+            console.log(statusText);
+            return res.send(errResponse(baseResponse.LOGIN_KAKAO_ERROR));
+        }
     } catch (error) {
         console.log(JSON.stringify(error))
         console.log(error)
         return res.send(errResponse(baseResponse.LOGIN_KAKAO_TOKEN_ERROR));
     }
 
-    if (axiosResult.status === 200) {
-        console.log('statuscode 200')
-        const userData = axiosResult.data.kakao_account;
 
-        console.log(userData);
-        const email = userData.email;
-        const identification = axiosResult.data.id;
-
-        console.log('id: ' + identification + ' email ' + email)
-
-        // DB에 유저 있는지 확인 후, 없으면 로그인 처리
-        const userExist = await userProvider.checkUserExist(email, identification);
-        console.log(userExist)
-        if (userExist.length > 0) {
-            const signInResponse = await userService.postKaKaoLogin(identification);
-
-            const userIdx = signInResponse.result.userIdx;
-            console.log(userIdx);
-
-            // 기기 토큰값 입력 (수정하기)
-            const patchDeviceToken = await userService.patchDeviceToken(userIdx, deviceToken);
-            if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
-            return res.send(signInResponse);
-        }
-
-        else {
-            const signinResponse = await userService.createUser("nickname", 2000, "N", "kakao", email, identification);
-
-            const userIdxFromSignin = signinResponse.userIdx;
-            console.log('userIDx from createUser: ' + userIdxFromSignin)
-            const patchDeviceToken = await userService.patchDeviceToken(userIdxFromSignin, deviceToken);
-            if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
-
-            return res.json({
-                isSuccess: false,
-                code: 5028,
-                message: "로그인 실패. 회원가입해주세요",
-                result: signinResponse
-            });
-
-        }
-    }
-    else{
-        console.log('statusCode is not 200??');
-        console.log('axios errorcode: ' + axiosResult.status);
-
-        console.log(statusText);
-        return res.send(errResponse(baseResponse.LOGIN_KAKAO_ERROR));
-    }
 
 }
 
@@ -139,37 +141,31 @@ exports.loginNaver = async function (req, res) {
             method: 'get',
             headers: {'Authorization': header}
         });
-    } catch (error) {
-        console.log(JSON.stringify(error))
-        console.log(error)
-        return res.send(errResponse(baseResponse.LOGIN_NAVER_TOKEN_ERROR));
-    }
 
+        if (axiosResult.status === 200) {
+            const userData = axiosResult.data.response;
+            const email = userData.email;
+            const identification = userData.id;
 
-    if (axiosResult.status === 200) {
-        const userData = axiosResult.data.response;
-        const email = userData.email;
-        const identification = userData.id;
+            console.log('id: ' + identification + ' email ' + email)
 
-        console.log('id: ' + identification + ' email ' + email)
+            // DB에 유저 있는지 확인 후, 있으면 로그인 처리
+            const userByIden = await userProvider.checkUserExistByIden(identification);
+            console.log(userByIden)
+            if (userByIden.length > 0) {
+                const signInResponse = await userService.postNaverLogin(identification);
 
-        // DB에 유저 있는지 확인 후, 있으면 로그인 처리
-        const userByIden = await userProvider.checkUserExistByIden(identification);
-        console.log(userByIden)
-        if (userByIden.length > 0) {
-            const signInResponse = await userService.postNaverLogin(identification);
-
-            const userIdx = signInResponse.result.userIdx;
-            console.log(userIdx);
+                const userIdx = signInResponse.result.userIdx;
+                console.log(userIdx);
 
                 // 기기 토큰값 입력 (수정하기)
                 const patchDeviceToken = await userService.patchDeviceToken(userIdx, deviceToken);
                 if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
 
                 return res.send(signInResponse);
-        }
-        // 회원가입하기
-        else {
+            }
+            // 회원가입하기
+            else {
                 const signinResponse = await userService.createUser("nickname", 2000, "N", "naver", email, identification);
 
                 console.log('signinResponse userIds: ' + signinResponse.userIdx);
@@ -188,15 +184,23 @@ exports.loginNaver = async function (req, res) {
                     message  : "로그인 실패. 회원가입해주세요",
                     result   : signinResponse
                 });
-        }
-    } else {
-        console.log('statusCode is not 200??');
-        console.log('axios result: ' + JSON.stringify(axiosResult));
-        const err = axiosResult.response;
-        console.log('error' + JSON.stringify(err));
+            }
+        } else {
+            console.log('statusCode is not 200??');
+            console.log('axios result: ' + JSON.stringify(axiosResult));
+            const err = axiosResult.response;
+            console.log('error' + JSON.stringify(err));
 
-        return res.send(baseResponse.LOGIN_KAKAO_ERROR);
+            return res.send(baseResponse.LOGIN_KAKAO_ERROR);
+        }
+    } catch (error) {
+        console.log(JSON.stringify(error))
+        console.log(error)
+        return res.send(errResponse(baseResponse.LOGIN_NAVER_TOKEN_ERROR));
     }
+
+
+
 
 
 }
