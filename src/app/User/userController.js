@@ -62,9 +62,10 @@ exports.loginKakao = async function (req, res) {
     if (axiosResult.status === 200) {
         console.log('statuscode 200')
         const userData = axiosResult.data.kakao_account;
+
         console.log(userData);
         const email = userData.email;
-        const identification = axiosResult.id;
+        const identification = axiosResult.data.id;
 
         console.log('id: ' + identification + ' email ' + email)
 
@@ -84,10 +85,11 @@ exports.loginKakao = async function (req, res) {
         }
 
         else {
-            const signinResponse = await userService.createUser("nickname", 2000, "N", "kakao", email, identification, deviceToken);
+            const signinResponse = await userService.createUser("nickname", 2000, "N", "kakao", email, identification);
 
-            const userIdx = signinResponse.userIdx;
-            const patchDeviceToken = await userService.patchDeviceToken(userIdx, deviceToken);
+            const userIdxFromSignin = signinResponse.userIdx;
+            console.log('userIDx from createUser: ' + userIdxFromSignin)
+            const patchDeviceToken = await userService.patchDeviceToken(userIdxFromSignin, deviceToken);
             if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
 
             return res.json({
@@ -166,8 +168,16 @@ exports.loginNaver = async function (req, res) {
 
                 return res.send(signInResponse);
         }
+        // 회원가입하기
         else {
                 const signinResponse = await userService.createUser("nickname", 2000, "N", "naver", email, identification);
+
+                console.log('signinResponse userIds: ' + signinResponse.userIdx);
+                const userIdxSignin = parseInt(signinResponse.userIdx);
+
+                // 기기 토큰값 입력 (수정하기)
+                const patchDeviceToken = await userService.patchDeviceToken(userIdxSignin, deviceToken);
+                if (patchDeviceToken !== 1) return res.send(patchDeviceToken);
 
                 //const signinResponse = userService.createUser("nickname", 2000, "N", "naver", email, identification);
                 console.log('signinres ='+ signinResponse)
