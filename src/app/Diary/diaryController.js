@@ -466,7 +466,7 @@ exports.patchDiaryStatus = async function (req, res) {
 exports.patchDiary = async function (req, res) {
 
     /**
-     * Body: emoji, date, content, shareAgree
+     * Body: emoji, year, month, day, content, shareAgree
      */
 
     const diaryIdx = req.params.diaryIdx;
@@ -496,7 +496,9 @@ exports.patchDiary = async function (req, res) {
     const patchdiaryResponse = await diaryService.updateDiary(diaryIdx, userIdx, date, emoji, content, shareAgree);
 
     // shareAgree T면 랜덤 유저의 deviceToken 가져오기.
-    //let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
+    //
+    //
+    let deviceToken = 'fHmdTyvtSy63ZLZ0zrbopX:APA91bHtJef5XGXLV1TaGSvcrPu5v_1on_ogaDeGd3kSpDwfhB2es69GHbO-etQNnhVUjpiqf_KHYhpCHQbDzOugLrjb1v3jeKGCCLYr8dhTsHjYoo87lyjxPIQm0EhybIdeZ0mF-3TR';
     admin.initializeApp({
         credential: admin.credential.cert(fcmAccount),
 

@@ -214,11 +214,12 @@ async function updateUserStatus(connection,  userIdx) {
 
 async function updateDiaryPush(connection, userIdx, diaryPush) {
 
+  const updateParams = [diaryPush, userIdx]
   const updateDiaryPushQuery = `
     UPDATE Push
     SET diaryPush = ?
     WHERE userIdx = ?;`;
-  const updateDiaryPushRow = await connection.query(updateDiaryPushQuery,[diaryPush, userIdx]);
+  const updateDiaryPushRow = await connection.query(updateDiaryPushQuery,updateParams);
   return updateDiaryPushRow[0];
 }
 

@@ -145,7 +145,8 @@ exports.createUser = async function (nickname, birthYear, gender, type, email, i
             await connection.beginTransaction();
             const userNicknameResult = await userDao.insertUserInfo(connection, insertUserInfoParams);
             console.log(`추가된 회원 : ${userNicknameResult[0].insertId}`)
-            const newUserIdx = userNicknameResult[0].insertId;
+            const newUserIdx = parseInt(userNicknameResult[0].insertId);
+            console.log('newUserIdx: '+newUserIdx)
             const userPushResult = await userDao.insertPush(connection, newUserIdx);
 
             //토큰 생성 Service
@@ -266,10 +267,16 @@ exports.editDiaryPush= async function (userIdx, diaryPush) {
     try {
         const connection = await pool.getConnection(async (conn) => conn);
 
+        console.log('In editDiaryPush')
         //회원 존재 확인
         const userIdRows = await userProvider.userIdCheck(userIdx);
         if (userIdRows.length < 1)
             return errResponse(baseResponse.USER_USERID_NOT_EXIST);
+
+        console.log('Before updateDiaryPush')
+        console.log('userIdx: ' + userIdx + ' diaryPush: ' + diaryPush)
+        console.log('Type of diaryPush: ' + typeof(diaryPush))
+        diaryPush = diaryPush.charAt(0)
 
         const editDiaryPushResult = await userDao.updateDiaryPush(connection, userIdx, diaryPush);
         connection.release();

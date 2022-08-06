@@ -346,6 +346,7 @@ exports.loginNaver = async function (req, res) {
 
         const userIdx = req.params.userIdx;
         const diaryPush = req.body.diaryPush;
+        console.log('userIdx: ' + userIdx + ' diaryPush: ' + diaryPush)
 
         if (userIdFromJWT != userIdx) {
             res.send(errResponse(baseResponse.USER_ID_NOT_MATCH));
